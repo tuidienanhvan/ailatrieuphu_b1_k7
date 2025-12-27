@@ -13,98 +13,105 @@ import { useGameStore } from '../features/game/store/useGameStore';
 import { GameState } from '../features/game/types/common';
 
 interface WelcomeScreenProps {
-  onStart: () => void;
+    onStart: () => void;
 }
 
 export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart }) => {
-  const setGameState = useGameStore(s => s.setGameState);
-  
-  return (
-    <div className="flex-1 flex items-center justify-center animate-fade-in relative overflow-hidden bg-[#020617] select-none w-full h-full">
-      
-      {/* 1. Global Atmosphere Layer */}
-      <BackgroundEffects />
-      <StudioSpotlights />
-      <FloatingSymbols />
+    const setGameState = useGameStore(s => s.setGameState);
 
-      {/* 2. HUD Overlay (Broadcast Graphics) */}
-      <WelcomeHUD />
+    return (
+        <div className="flex-1 flex items-center justify-center animate-fade-in relative overflow-hidden bg-[#020617] select-none w-full h-full">
 
-      {/* 3. Main Layout Container (Split Screen Row) */}
-      <div className="absolute inset-0 z-20 flex flex-row">
+            {/* 1. Global Atmosphere Layer */}
+            <BackgroundEffects />
+            <StudioSpotlights />
+            <FloatingSymbols />
 
-            {/* --- LEFT COLUMN: THE TROPHY STAGE --- */}
-            <div className="w-[50%] h-full relative flex items-center justify-center perspective-[2000px]">
-                {/* Spotlight from top center specific to Trophy */}
-                <div className="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[2px] h-[120%] bg-gradient-to-b from-white/40 via-[#fbbf24]/20 to-transparent blur-[8px] z-30"></div>
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[300px] h-[600px] bg-gradient-to-b from-white/5 to-transparent blur-[50px] pointer-events-none z-0"></div>
+            {/* 2. HUD Overlay (Broadcast Graphics) */}
+            <WelcomeHUD />
 
-                {/* Glow behind the Throne */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#fbbf24] blur-[150px] opacity-10 rounded-full animate-pulse pointer-events-none"></div>
-                
-                {/* Trophy Container */}
-                <div className="transform scale-[1.25] translate-y-10 transition-transform duration-700 hover:scale-[1.3] relative z-20 drop-shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
-                    <TrophyStage />
-                </div>
+            {/* 3. Main Layout Container (Split Screen Row) */}
+            <div className="absolute inset-0 z-20 flex flex-row">
 
-                {/* Floor Reflection */}
-                <div className="absolute bottom-[8%] left-1/2 -translate-x-1/2 transform scale-[1.25] scale-y-[-0.3] opacity-30 blur-[3px] pointer-events-none z-10">
-                    <div className="mask-image: linear-gradient(to bottom, black, transparent)">
-                       <TrophyStage />
-                    </div>
-                </div>
-            </div>
+                {/* --- LEFT COLUMN: THE TROPHY STAGE --- */}
+                <div className="w-[50%] h-full relative flex items-center justify-center perspective-[2000px]">
+                    {/* Spotlight from top center specific to Trophy */}
+                    <div className="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[2px] h-[120%] bg-gradient-to-b from-white/40 via-[#fbbf24]/20 to-transparent blur-[8px] z-30"></div>
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[300px] h-[600px] bg-gradient-to-b from-white/5 to-transparent blur-[50px] pointer-events-none z-0"></div>
 
-            {/* --- CENTER DIVIDER (TECH PILLAR) --- */}
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[80%] flex flex-col items-center justify-center gap-2 z-10 opacity-60">
-                <div className="w-[1px] h-full bg-gradient-to-b from-transparent via-white/20 to-transparent"></div>
-                <div className="absolute top-[20%] w-1.5 h-1.5 bg-[#fbbf24] rounded-full shadow-[0_0_10px_#fbbf24]"></div>
-                <div className="absolute top-[50%] w-2 h-2 bg-white rounded-full shadow-[0_0_15px_white]"></div>
-                <div className="absolute top-[80%] w-1.5 h-1.5 bg-[#fbbf24] rounded-full shadow-[0_0_10px_#fbbf24]"></div>
-            </div>
+                    {/* Glow behind the Throne */}
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#fbbf24] blur-[150px] opacity-10 rounded-full animate-pulse pointer-events-none"></div>
 
-            {/* --- RIGHT COLUMN: THE ACTION --- */}
-            <div className="w-[50%] h-full relative flex flex-col items-center justify-center pr-20 pl-16">
-                
-                {/* Hexagon Pattern */}
-                <div className="absolute inset-0 opacity-[0.03] pointer-events-none" 
-                     style={{
-                        backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l25.98 15v30L30 60 4.02 45V15z' fill-rule='evenodd' stroke='%23ffffff' stroke-width='1' fill='none'/%3E%3C/svg%3E")`,
-                        backgroundSize: '80px 80px',
-                        maskImage: 'radial-gradient(circle at center, black, transparent 80%)'
-                     }}>
-                </div>
-
-                {/* Container for alignment */}
-                <div className="flex flex-col items-center gap-12 transform -translate-y-4 w-full relative z-10">
-                    
-                    <JackpotDisplay />
-
-                    <div className="relative group p-10">
-                        <div className="absolute inset-0 bg-white/5 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
-                        <GameTitle />
+                    {/* Trophy Container */}
+                    <div className="transform scale-[1.25] translate-y-10 transition-transform duration-700 hover:scale-[1.3] relative z-20 drop-shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
+                        <TrophyStage />
                     </div>
 
-                    <div className="relative z-50 mt-2 flex flex-col items-center gap-6">
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[160%] h-24 bg-[#fbbf24] blur-[70px] opacity-25 pointer-events-none animate-pulse"></div>
-                        
-                        <StartButton onClick={onStart} />
-
-                        {/* SHOP BUTTON */}
-                        <button 
-                            onClick={() => setGameState(GameState.SHOP)}
-                            className="flex items-center gap-3 px-8 py-3 rounded-full border border-white/20 bg-white/5 hover:bg-white/10 hover:border-[#fbbf24]/50 transition-all group backdrop-blur-sm"
-                        >
-                            <ShoppingCart size={20} className="text-slate-400 group-hover:text-[#fbbf24] transition-colors" />
-                            <span className="text-sm font-bold uppercase tracking-[0.2em] text-slate-400 group-hover:text-white transition-colors">Cửa Hàng</span>
-                        </button>
+                    {/* Floor Reflection */}
+                    <div className="absolute bottom-[8%] left-1/2 -translate-x-1/2 transform scale-[1.25] scale-y-[-0.3] opacity-30 blur-[3px] pointer-events-none z-10">
+                        <div className="mask-image: linear-gradient(to bottom, black, transparent)">
+                            <TrophyStage />
+                        </div>
                     </div>
                 </div>
+
+                {/* --- CENTER DIVIDER (TECH PILLAR) --- */}
+                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[80%] flex flex-col items-center justify-center gap-2 z-10 opacity-60">
+                    <div className="w-[1px] h-full bg-gradient-to-b from-transparent via-white/20 to-transparent"></div>
+                    <div className="absolute top-[20%] w-1.5 h-1.5 bg-[#fbbf24] rounded-full shadow-[0_0_10px_#fbbf24]"></div>
+                    <div className="absolute top-[50%] w-2 h-2 bg-white rounded-full shadow-[0_0_15px_white]"></div>
+                    <div className="absolute top-[80%] w-1.5 h-1.5 bg-[#fbbf24] rounded-full shadow-[0_0_10px_#fbbf24]"></div>
+                </div>
+
+                {/* --- RIGHT COLUMN: THE ACTION --- */}
+                <div className="w-[50%] h-full relative flex flex-col items-center justify-center pr-20 pl-16">
+
+                    {/* Hexagon Pattern */}
+                    <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
+                        style={{
+                            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l25.98 15v30L30 60 4.02 45V15z' fill-rule='evenodd' stroke='%23ffffff' stroke-width='1' fill='none'/%3E%3C/svg%3E")`,
+                            backgroundSize: '80px 80px',
+                            maskImage: 'radial-gradient(circle at center, black, transparent 80%)'
+                        }}>
+                    </div>
+
+                    {/* Container for alignment */}
+                    <div className="flex flex-col items-center gap-12 transform -translate-y-4 w-full relative z-10">
+
+                        <JackpotDisplay />
+
+                        <div className="relative group p-10">
+                            <div className="absolute inset-0 bg-white/5 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
+                            <GameTitle />
+                        </div>
+
+                        <div className="relative z-50 mt-2 flex flex-col items-center gap-6">
+                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[160%] h-24 bg-[#fbbf24] blur-[70px] opacity-25 pointer-events-none animate-pulse"></div>
+
+                            <StartButton onClick={onStart} />
+
+                            {/* SHOP BUTTON */}
+                            <button
+                                onClick={() => setGameState(GameState.SHOP)}
+                                className="flex items-center gap-3 px-8 py-3 rounded-full border border-white/20 bg-white/5 hover:bg-white/10 hover:border-[#fbbf24]/50 transition-all group backdrop-blur-sm"
+                            >
+                                <ShoppingCart size={20} className="text-slate-400 group-hover:text-[#fbbf24] transition-colors" />
+                                <span className="text-sm font-bold uppercase tracking-[0.2em] text-slate-400 group-hover:text-white transition-colors">Cửa Hàng</span>
+                            </button>
+
+                            {/* TEST INPUT - Remove after testing */}
+                            <input
+                                type="text"
+                                placeholder="Test keyboard..."
+                                className="px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/50 text-center"
+                            />
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
-      </div>
-
-      <style>{`
+            <style>{`
         @keyframes spin-very-slow {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
@@ -121,6 +128,6 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart }) => {
             animation: float-gentle 4s ease-in-out infinite;
         }
       `}</style>
-    </div>
-  );
+        </div>
+    );
 };

@@ -156,17 +156,15 @@ export const App: React.FC = () => {
         ref={containerRef}
         className={`viewport-layer ${isFullscreen ? 'fs-mode-css' : ''}`}
       >
-        {/* 1. Stage Layer (Fixed 1920x1080) - Item #1, #13 */}
+        {/* 1. Stage Layer (Fixed 1920x1080) */}
         <div
           ref={stageRef}
           className="scaling-root"
           style={{
-            opacity: 0, // #14: FOUC Shield - JS reveals after first scale
+            opacity: 0,
             width: '1920px',
             height: '1080px',
-            transformOrigin: '0 0',
-            willChange: 'transform', // #13: Hint browser for GPU layer
-            backfaceVisibility: 'hidden' // #13: Prevent flickering
+            transformOrigin: '0 0'
           }}
         >
           {isLoading && <FetchingOverlay />}
