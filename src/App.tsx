@@ -161,15 +161,14 @@ export const App: React.FC = () => {
           ref={stageRef}
           className="scaling-root"
           style={{
-            visibility: 'hidden',
-            opacity: 0,
-            transition: 'opacity 0.2s ease-in',
+            display: 'none', // JS controls visibility via display
+            flexDirection: 'column',
             width: '1920px',
             height: '1080px',
             transformOrigin: '0 0',
             willChange: 'transform',
             backfaceVisibility: 'hidden',
-            contain: 'strict'
+            contain: 'layout paint' // Removed 'size' - was blocking SVG rendering
           }}
         >
           {isLoading && <FetchingOverlay />}

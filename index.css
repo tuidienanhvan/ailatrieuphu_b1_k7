@@ -28,8 +28,8 @@
   background-color: #000;
   box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
   overflow: hidden;
-  /* Anti-flicker optimizations */
-  contain: layout style paint;
+  /* Simplified containment - removed 'layout style' to prevent SVG issues */
+  contain: paint;
   isolation: isolate;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
