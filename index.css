@@ -19,7 +19,7 @@
   transform: translateZ(0);
 }
 
-/* 1. Stage Logic (Base styles) */
+/* 1. Stage Logic (Base styles) - Items #13, #14, #15 */
 .scaling-root {
   position: absolute;
   top: 0;
@@ -28,6 +28,10 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  /* #15: Layer isolation */
+  isolation: isolate;
+  /* #14: FOUC Shield - smooth reveal */
+  transition: opacity 0.15s ease-out;
 }
 
 /* 61. Fullscreen Modes */
