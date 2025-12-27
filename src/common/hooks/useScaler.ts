@@ -169,34 +169,46 @@ export const useScaler = (
     }
   }, [stageRef]);
 
-  // End rotation lock - show everything with proper layout
+  // End rotation lock - STAGGERED REVEAL to prevent jank
+  // Order: update scale → show stage (animations paused) → hide overlay → wait for paint → resume animations
   const endRotationLock = useCallback(() => {
-    debugLog('Rotation lock END');
+    debugLog('Rotation lock END - starting staggered reveal');
     isRotatingRef.current = false;
 
-    // Re-enable animations
-    document.body.classList.remove('is-rotating');
-
-    // Final scale update
+    // Step 1: Final scale update (while still hidden)
     updateScale();
 
-    // Force a full repaint before showing
+    // Step 2: Make stage visible but KEEP animations paused
+    // This lets browser paint the static layout first
     if (stageRef.current) {
-      void stageRef.current.offsetHeight;
+      void stageRef.current.offsetHeight; // Force reflow
       stageRef.current.style.visibility = 'visible';
       stageRef.current.style.opacity = '1';
     }
 
-    // Hide overlay
+    // Step 3: Hide overlay
     const overlay = getRotationOverlay();
     if (overlay) overlay.classList.remove('active');
 
-    // Reconnect ResizeObserver
+    // Step 4: Reconnect ResizeObserver
     if (resizeObserverRef.current && containerRef.current) {
       resizeObserverRef.current.observe(document.documentElement);
       resizeObserverRef.current.observe(containerRef.current);
     }
+
+    // Step 5: Wait for browser to paint static content, THEN resume animations
+    // Using double rAF ensures we wait for both layout and paint
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        // Small additional delay to ensure GPU compositing is complete
+        setTimeout(() => {
+          debugLog('Resuming animations');
+          document.body.classList.remove('is-rotating');
+        }, 50);
+      });
+    });
   }, [stageRef, containerRef, updateScale]);
+
 
   // Handle orientation change with overlay protection
   const handleOrientationChange = useCallback(() => {
