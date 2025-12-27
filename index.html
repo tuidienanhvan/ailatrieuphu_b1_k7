@@ -1,128 +1,254 @@
 <!DOCTYPE html>
 <html lang="vi">
-  <head>
-    <meta charset="utf-8" />
-    <!-- 8. Viewport meta đầy đủ với PWA support & interactive-widget -->
-    <meta name="viewport" 
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=overlays-content">
-    
-    <!-- PWA meta tags -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="AI Là Triệu Phú">
-    <meta name="theme-color" content="#000000">
-    
-    <title>AI Là Triệu Phú</title>
-    
-    <link rel="preconnect" href="https://cdn.tailwindcss.com">
-    <link rel="preconnect" href="https://esm.sh">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" as="style">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<head>
+  <meta charset="utf-8" />
+  <!-- 8. Viewport meta đầy đủ với PWA support & interactive-widget -->
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=overlays-content">
 
-    <link rel="icon" href="data:," />
-    
-    <!-- 7. Critical CSS inline với Scroll Jail Pattern -->
-    <style>
-      /* Box Model Reset */
-      *, *::before, *::after {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
+  <!-- PWA meta tags -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="AI Là Triệu Phú">
+  <meta name="theme-color" content="#000000">
+
+  <title>AI Là Triệu Phú</title>
+
+  <link rel="preconnect" href="https://cdn.tailwindcss.com">
+  <link rel="preconnect" href="https://esm.sh">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link rel="preload"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap"
+    as="style">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap"
+    rel="stylesheet">
+
+  <link rel="icon" href="data:," />
+
+  <!-- 7. Critical CSS inline với Scroll Jail Pattern -->
+  <style>
+    /* Box Model Reset */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Root setup - Scroll Jail */
+    html,
+    body {
+      position: fixed;
+      /* Chặn iOS scroll khi keyboard mở */
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #000000;
+      overflow: hidden;
+      overscroll-behavior: none;
+      /* Chặn pull-to-refresh */
+      font-family: 'Inter', sans-serif;
+      color: white;
+
+      /* Lock gestures */
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+
+      /* Rendering optimization */
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+
+    #root {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    /* Input Zoom Fix & Selection */
+    input,
+    textarea,
+    select {
+      font-size: 16px !important;
+      user-select: text;
+      -webkit-user-select: text;
+    }
+
+    img {
+      -webkit-user-drag: none;
+      user-drag: none;
+    }
+
+    /* Animation Definitions */
+    @keyframes infiniteShine {
+      0% {
+        background-position: 0% center;
       }
 
-      /* Root setup - Scroll Jail */
-      html, body {
-        position: fixed; /* Chặn iOS scroll khi keyboard mở */
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        background-color: #000000;
-        overflow: hidden;
-        overscroll-behavior: none; /* Chặn pull-to-refresh */
-        font-family: 'Inter', sans-serif;
-        color: white;
-        
-        /* Lock gestures */
-        touch-action: none;
-        user-select: none;
-        -webkit-user-select: none;
-        -webkit-touch-callout: none;
-
-        /* Rendering optimization */
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        text-rendering: optimizeLegibility;
+      100% {
+        background-position: -200% center;
       }
-      
-      #root {
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
+    }
+
+    .animate-text-shine-infinite {
+      animation: infiniteShine 4s linear infinite;
+    }
+
+    @keyframes spinRotate {
+      from {
+        transform: rotate(0deg);
       }
 
-      /* Input Zoom Fix & Selection */
-      input, textarea, select {
-        font-size: 16px !important;
-        user-select: text;
-        -webkit-user-select: text;
+      to {
+        transform: rotate(360deg);
       }
-      
-      img {
-        -webkit-user-drag: none;
-        user-drag: none;
+    }
+
+    .animate-spin-slow {
+      animation: spinRotate 20s linear infinite;
+      transform-origin: center;
+      will-change: transform;
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0);
       }
-      
-      /* Animation Definitions */
-      @keyframes infiniteShine {
-        0% { background-position: 0% center; }
-        100% { background-position: -200% center; }
+
+      50% {
+        transform: translateY(-20px);
       }
-      .animate-text-shine-infinite { animation: infiniteShine 4s linear infinite; }
-      
-      @keyframes spinRotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-      .animate-spin-slow { animation: spinRotate 20s linear infinite; transform-origin: center; will-change: transform; }
+    }
 
-      @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
-      .animate-float { animation: float 6s ease-in-out infinite; }
+    .animate-float {
+      animation: float 6s ease-in-out infinite;
+    }
 
-      @keyframes shake { 0%, 100% { transform: translateX(0); } 10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); } 20%, 40%, 60%, 80% { transform: translateX(5px); } }
-      .animate-shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+    @keyframes shake {
 
-      @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-      .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+      0%,
+      100% {
+        transform: translateX(0);
+      }
 
-      .scrollbar-hide::-webkit-scrollbar { display: none; }
-      .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-      
-      mjx-container { font-size: 1.1em !important; color: inherit !important; outline: none !important; }
-    </style>
-    
-    <script>
-      tailwind = {
-        config: {
-          theme: {
-            extend: {
-              colors: {
-                game: { bg: '#020024', panel: '#001e3c', blue_light: '#004e92', gold: '#fbbf24', gold_dim: '#b45309', correct: '#059669', wrong: '#dc2626', text: '#e2e8f0' }
-              },
-              fontFamily: { sans: ['"Inter"', 'sans-serif'], mono: ['"JetBrains Mono"', 'monospace'] },
-              boxShadow: { 'glow-gold': '0 0 15px rgba(251, 191, 36, 0.4)', 'glow-blue': '0 0 20px rgba(56, 189, 248, 0.3)' },
-            }
+      10%,
+      30%,
+      50%,
+      70%,
+      90% {
+        transform: translateX(-5px);
+      }
+
+      20%,
+      40%,
+      60%,
+      80% {
+        transform: translateX(5px);
+      }
+    }
+
+    .animate-shake {
+      animation: shake 0.5s cubic-bezier(.36, .07, .19, .97) both;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    .animate-fade-in {
+      animation: fadeIn 0.5s ease-out forwards;
+    }
+
+    .scrollbar-hide::-webkit-scrollbar {
+      display: none;
+    }
+
+    .scrollbar-hide {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    mjx-container {
+      font-size: 1.1em !important;
+      color: inherit !important;
+      outline: none !important;
+    }
+
+    /* Rotation handling overlay - always present but hidden */
+    #orientation-mask {
+      position: fixed;
+      inset: 0;
+      z-index: 999999;
+      background-color: #000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s ease-out;
+    }
+
+    /* When JS sets is-rotating class, show the mask */
+    body.is-rotating #orientation-mask,
+    body.is-rotating #root {
+      /* Handled by JS now */
+    }
+
+    /* Pause animations during rotation */
+    body.is-rotating,
+    body.is-rotating * {
+      animation-play-state: paused !important;
+      transition: none !important;
+    }
+
+    body.is-rotating svg animate,
+    body.is-rotating svg animateTransform,
+    body.is-rotating svg animateMotion {
+      animation-play-state: paused !important;
+    }
+
+    #orientation-mask.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  </style>
+
+  <script>
+    tailwind = {
+      config: {
+        theme: {
+          extend: {
+            colors: {
+              game: { bg: '#020024', panel: '#001e3c', blue_light: '#004e92', gold: '#fbbf24', gold_dim: '#b45309', correct: '#059669', wrong: '#dc2626', text: '#e2e8f0' }
+            },
+            fontFamily: { sans: ['"Inter"', 'sans-serif'], mono: ['"JetBrains Mono"', 'monospace'] },
+            boxShadow: { 'glow-gold': '0 0 15px rgba(251, 191, 36, 0.4)', 'glow-blue': '0 0 20px rgba(56, 189, 248, 0.3)' },
           }
         }
       }
-    </script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      window.MathJax = {
-        tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
-        svg: { fontCache: 'global' }, startup: { typeset: false }
-      };
-    </script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    }
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+      svg: { fontCache: 'global' }, startup: { typeset: false }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
   <script type="importmap">
 {
   "imports": {
@@ -138,10 +264,13 @@
   }
 }
 </script>
-<link rel="stylesheet" href="/index.css">
+  <link rel="stylesheet" href="/index.css">
 </head>
-  <body oncontextmenu="return false;">
-    <div id="root"></div>
-    <script type="module" src="/index.tsx"></script>
-  </body>
+
+<body oncontextmenu="return false;">
+  <div id="orientation-mask"></div>
+  <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+
 </html>

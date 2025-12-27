@@ -50,50 +50,12 @@ const readViewport = () => {
 
 // Inject rotation CSS styles once
 const injectRotationStyles = () => {
-  if (document.getElementById('rotation-styles')) return;
-
-  const style = document.createElement('style');
-  style.id = 'rotation-styles';
-  style.textContent = `
-    /* Pause ALL animations during rotation */
-    body.is-rotating,
-    body.is-rotating * {
-      animation-play-state: paused !important;
-      transition: none !important;
-    }
-    
-    body.is-rotating svg animate,
-    body.is-rotating svg animateTransform {
-      animation-play-state: paused !important;
-    }
-    
-    #rotation-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 999999;
-      background-color: #000;
-      opacity: 0;
-      pointer-events: none;
-      will-change: opacity;
-    }
-    
-    #rotation-overlay.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
-  `;
-  document.head.appendChild(style);
+  // CSS is now in index.html - no need to inject
 };
 
-// Create/get rotation overlay element
-const getRotationOverlay = (): HTMLDivElement => {
-  let overlay = document.getElementById('rotation-overlay') as HTMLDivElement;
-  if (!overlay) {
-    overlay = document.createElement('div');
-    overlay.id = 'rotation-overlay';
-    document.body.appendChild(overlay);
-  }
-  return overlay;
+// Get the rotation overlay element (created in index.html)
+const getRotationOverlay = (): HTMLDivElement | null => {
+  return document.getElementById('orientation-mask') as HTMLDivElement | null;
 };
 
 export const useScaler = (
@@ -108,9 +70,9 @@ export const useScaler = (
   const isRotatingRef = useRef(false);
   const resizeObserverRef = useRef<ResizeObserver | null>(null);
 
-  // Inject styles on mount
+  // No need to inject styles - they're in index.html
   useEffect(() => {
-    injectRotationStyles();
+    // injectRotationStyles(); // Not needed anymore
   }, []);
 
   // 4. Compute Scale: min(vw/W, vh/H)
@@ -193,7 +155,7 @@ export const useScaler = (
 
     // Show overlay immediately
     const overlay = getRotationOverlay();
-    overlay.classList.add('active');
+    if (overlay) overlay.classList.add('active');
 
     // Hide stage completely
     if (stageRef.current) {
@@ -227,7 +189,7 @@ export const useScaler = (
 
     // Hide overlay
     const overlay = getRotationOverlay();
-    overlay.classList.remove('active');
+    if (overlay) overlay.classList.remove('active');
 
     // Reconnect ResizeObserver
     if (resizeObserverRef.current && containerRef.current) {
@@ -339,12 +301,10 @@ export const useScaler = (
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       rotationTimeoutsRef.current.forEach(id => clearTimeout(id));
 
-      // Clean up
+      // Clean up - just remove class and reset overlay, don't remove elements
       document.body.classList.remove('is-rotating');
-      const overlay = document.getElementById('rotation-overlay');
-      if (overlay) overlay.remove();
-      const styles = document.getElementById('rotation-styles');
-      if (styles) styles.remove();
+      const overlay = getRotationOverlay();
+      if (overlay) overlay.classList.remove('active');
     };
   }, [onResize, handleOrientationChange, containerRef]);
 
