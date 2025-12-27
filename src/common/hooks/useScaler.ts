@@ -5,7 +5,7 @@ const GAME_W = 1920;
 const GAME_H = 1080;
 
 // Rotation handling delays (ms) - progressive updates to catch correct viewport
-const ROTATION_DELAYS = [50, 150, 300, 500, 800];
+const ROTATION_DELAYS = [100, 250, 500, 800, 1200];
 
 // 24. Debug Mode via localStorage
 const DEBUG = typeof window !== 'undefined' && localStorage.getItem('debugScale') === '1';
@@ -18,14 +18,14 @@ function debugLog(msg: string, data?: any) {
 const isTextEditing = () => {
   const el = document.activeElement;
   if (!el) return false;
-  
+
   if (el instanceof HTMLInputElement) {
     const textTypes = ['text', 'password', 'email', 'search', 'tel', 'url', 'number'];
     return textTypes.includes(el.type);
   }
   if (el instanceof HTMLTextAreaElement) return true;
   if (el instanceof HTMLElement && el.isContentEditable) return true;
-  
+
   return false;
 };
 
@@ -33,8 +33,8 @@ const isTextEditing = () => {
 const readViewport = () => {
   const vv = window.visualViewport;
   if (vv) {
-    return { 
-      w: vv.width, 
+    return {
+      w: vv.width,
       h: vv.height,
       offX: vv.offsetLeft,
       offY: vv.offsetTop
@@ -48,21 +48,49 @@ const readViewport = () => {
   };
 };
 
-// Create/get rotation overlay element
-const getRotationOverlay = (): HTMLDivElement => {
-  let overlay = document.getElementById('rotation-overlay') as HTMLDivElement;
-  if (!overlay) {
-    overlay = document.createElement('div');
-    overlay.id = 'rotation-overlay';
-    overlay.style.cssText = `
+// Inject rotation CSS styles once
+const injectRotationStyles = () => {
+  if (document.getElementById('rotation-styles')) return;
+
+  const style = document.createElement('style');
+  style.id = 'rotation-styles';
+  style.textContent = `
+    /* Pause ALL animations during rotation */
+    body.is-rotating,
+    body.is-rotating * {
+      animation-play-state: paused !important;
+      transition: none !important;
+    }
+    
+    body.is-rotating svg animate,
+    body.is-rotating svg animateTransform {
+      animation-play-state: paused !important;
+    }
+    
+    #rotation-overlay {
       position: fixed;
       inset: 0;
       z-index: 999999;
       background-color: #000;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.15s ease-out;
-    `;
+      will-change: opacity;
+    }
+    
+    #rotation-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  `;
+  document.head.appendChild(style);
+};
+
+// Create/get rotation overlay element
+const getRotationOverlay = (): HTMLDivElement => {
+  let overlay = document.getElementById('rotation-overlay') as HTMLDivElement;
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'rotation-overlay';
     document.body.appendChild(overlay);
   }
   return overlay;
@@ -78,18 +106,24 @@ export const useScaler = (
   const rafRef = useRef<number | null>(null);
   const rotationTimeoutsRef = useRef<number[]>([]);
   const isRotatingRef = useRef(false);
+  const resizeObserverRef = useRef<ResizeObserver | null>(null);
+
+  // Inject styles on mount
+  useEffect(() => {
+    injectRotationStyles();
+  }, []);
 
   // 4. Compute Scale: min(vw/W, vh/H)
   const computeScale = useCallback((vw: number, vh: number) => {
     let scale = Math.min(vw / GAME_W, vh / GAME_H);
-    
+
     // Safety check
     if (!Number.isFinite(scale) || scale <= 0) {
       scale = scaleKeepRef.current || 1;
     }
-    
+
     // Clamp min
-    return Math.max(0.1, scale); 
+    return Math.max(0.1, scale);
   }, []);
 
   // 75. Apply Transform with Container Sync (Group I)
@@ -106,24 +140,24 @@ export const useScaler = (
 
     // 50. Single transform string, origin 0 0
     stageRef.current.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
-    
+
     // 20. Container Sync
     if (containerRef.current) {
-        containerRef.current.style.width = `${vw}px`;
-        containerRef.current.style.height = `${vh}px`;
-        containerRef.current.style.transform = `translate(${offX}px, ${offY}px)`;
+      containerRef.current.style.width = `${vw}px`;
+      containerRef.current.style.height = `${vh}px`;
+      containerRef.current.style.transform = `translate(${offX}px, ${offY}px)`;
     }
-    
+
     debugLog('Applied', { vw, vh, scale, tx, ty });
   }, [stageRef, containerRef]);
 
   // 32. Dual Threshold Keyboard Detection (Group C)
   const shouldFreezeForKeyboard = useCallback((currentH: number) => {
     if (!isTextEditing()) return false;
-    
+
     const baseH = baselineRef.current.h || currentH;
     const diff = baseH - currentH;
-    
+
     // Thresholds: > 150px AND > 15% height
     return diff > 150 && diff > (baseH * 0.15);
   }, []);
@@ -131,12 +165,12 @@ export const useScaler = (
   // 76. Update Scale Main Function
   const updateScale = useCallback(() => {
     const { w: vw, h: vh, offX, offY } = readViewport();
-    
+
     // 33. Freeze Logic: Keep scale, update position
     if (shouldFreezeForKeyboard(vh)) {
-       debugLog('Freeze active');
-       applyTransform(vw, vh, scaleKeepRef.current, offX, offY);
-       return;
+      debugLog('Freeze active');
+      applyTransform(vw, vh, scaleKeepRef.current, offX, offY);
+      return;
     }
 
     const scale = computeScale(vw, vh);
@@ -145,103 +179,140 @@ export const useScaler = (
 
     // 31. Baseline Management
     if (!isTextEditing()) {
-       baselineRef.current = { w: vw, h: vh };
+      baselineRef.current = { w: vw, h: vh };
     }
   }, [applyTransform, computeScale, shouldFreezeForKeyboard]);
 
-  // Show rotation overlay
-  const showRotationOverlay = useCallback(() => {
+  // Start rotation lock - hide everything immediately
+  const startRotationLock = useCallback(() => {
+    debugLog('Rotation lock START');
+    isRotatingRef.current = true;
+
+    // Add class to pause all CSS animations globally
+    document.body.classList.add('is-rotating');
+
+    // Show overlay immediately
     const overlay = getRotationOverlay();
-    overlay.style.opacity = '1';
-    overlay.style.pointerEvents = 'auto';
-    
-    // Also hide stage immediately to prevent any flash
+    overlay.classList.add('active');
+
+    // Hide stage completely
     if (stageRef.current) {
       stageRef.current.style.visibility = 'hidden';
-      stageRef.current.style.transition = 'none';
+      stageRef.current.style.opacity = '0';
+    }
+
+    // Disconnect ResizeObserver during rotation to prevent thrashing
+    if (resizeObserverRef.current) {
+      resizeObserverRef.current.disconnect();
     }
   }, [stageRef]);
 
-  // Hide rotation overlay
-  const hideRotationOverlay = useCallback(() => {
-    const overlay = getRotationOverlay();
-    
-    // First make stage visible but still transparent
+  // End rotation lock - show everything with proper layout
+  const endRotationLock = useCallback(() => {
+    debugLog('Rotation lock END');
+    isRotatingRef.current = false;
+
+    // Re-enable animations
+    document.body.classList.remove('is-rotating');
+
+    // Final scale update
+    updateScale();
+
+    // Force a full repaint before showing
     if (stageRef.current) {
-      stageRef.current.style.visibility = 'visible';
-      // Force reflow before enabling transition
       void stageRef.current.offsetHeight;
-      stageRef.current.style.transition = 'opacity 0.2s ease-in';
+      stageRef.current.style.visibility = 'visible';
       stageRef.current.style.opacity = '1';
     }
-    
-    // Then fade out overlay
-    requestAnimationFrame(() => {
-      overlay.style.opacity = '0';
-      overlay.style.pointerEvents = 'none';
-    });
-  }, [stageRef]);
+
+    // Hide overlay
+    const overlay = getRotationOverlay();
+    overlay.classList.remove('active');
+
+    // Reconnect ResizeObserver
+    if (resizeObserverRef.current && containerRef.current) {
+      resizeObserverRef.current.observe(document.documentElement);
+      resizeObserverRef.current.observe(containerRef.current);
+    }
+  }, [stageRef, containerRef, updateScale]);
 
   // Handle orientation change with overlay protection
   const handleOrientationChange = useCallback(() => {
-    debugLog('Orientation change started');
-    isRotatingRef.current = true;
-    
+    debugLog('Orientation change detected');
+
     // Clear any pending rotation timeouts
     rotationTimeoutsRef.current.forEach(id => clearTimeout(id));
     rotationTimeoutsRef.current = [];
-    
-    // Show overlay immediately
-    showRotationOverlay();
-    
+
+    // Lock immediately
+    startRotationLock();
+
     // Schedule multiple resize updates at progressive intervals
     const newTimeouts = ROTATION_DELAYS.map((delay, index) => {
       return window.setTimeout(() => {
+        // Update scale at each interval (while still hidden)
         updateScale();
         debugLog(`Rotation update ${index + 1}/${ROTATION_DELAYS.length} at ${delay}ms`);
-        
-        // On last update, hide overlay and restore
+
+        // On last update, unlock and show
         if (index === ROTATION_DELAYS.length - 1) {
-          isRotatingRef.current = false;
-          hideRotationOverlay();
+          endRotationLock();
         }
       }, delay);
     });
-    
-    rotationTimeoutsRef.current = newTimeouts;
-  }, [showRotationOverlay, hideRotationOverlay, updateScale]);
 
-  // 31. RAF Debounce Wrapper
+    rotationTimeoutsRef.current = newTimeouts;
+  }, [startRotationLock, endRotationLock, updateScale]);
+
+  // 31. RAF Debounce Wrapper with aspect ratio detection
+  const lastAspectRef = useRef<'portrait' | 'landscape' | null>(null);
+
   const onResize = useCallback(() => {
     // Skip resize during active rotation - let the timeout chain handle it
     if (isRotatingRef.current) {
       debugLog('Skipping resize during rotation');
       return;
     }
+
+    // Detect aspect ratio change (rotation via resize event)
+    const { w, h } = readViewport();
+    const currentAspect = w > h ? 'landscape' : 'portrait';
+
+    if (lastAspectRef.current !== null && lastAspectRef.current !== currentAspect) {
+      debugLog('Aspect ratio change detected via resize');
+      lastAspectRef.current = currentAspect;
+      handleOrientationChange();
+      return;
+    }
+
+    lastAspectRef.current = currentAspect;
+
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
     rafRef.current = requestAnimationFrame(updateScale);
-  }, [updateScale]);
+  }, [updateScale, handleOrientationChange]);
 
   useEffect(() => {
     // 77. Event Listener Setup (Group I)
     const vv = window.visualViewport;
-    
+
     window.addEventListener('resize', onResize, { passive: true });
-    
+
     // Special handler for orientation change
     window.addEventListener('orientationchange', handleOrientationChange, { passive: true });
-    
+
     window.addEventListener('focusin', onResize, { passive: true });
     // focusout need delay to allow keyboard animation to start
     const handleFocusOut = () => setTimeout(onResize, 100);
-    window.addEventListener('focusout', handleFocusOut, { passive: true }); 
-    
+    window.addEventListener('focusout', handleFocusOut, { passive: true });
+
     if (vv) {
-        vv.addEventListener('resize', onResize, { passive: true });
-        vv.addEventListener('scroll', onResize, { passive: true });
+      vv.addEventListener('resize', onResize, { passive: true });
+      vv.addEventListener('scroll', onResize, { passive: true });
     }
-    
+
+    // Store ResizeObserver reference so we can disconnect during rotation
     const ro = new ResizeObserver(onResize);
+    resizeObserverRef.current = ro;
     ro.observe(document.documentElement);
     if (containerRef.current) ro.observe(containerRef.current);
 
@@ -259,30 +330,34 @@ export const useScaler = (
       window.removeEventListener('focusin', onResize);
       window.removeEventListener('focusout', handleFocusOut);
       if (vv) {
-          vv.removeEventListener('resize', onResize);
-          vv.removeEventListener('scroll', onResize);
+        vv.removeEventListener('resize', onResize);
+        vv.removeEventListener('scroll', onResize);
       }
       document.removeEventListener('visibilitychange', onVisChange);
       ro.disconnect();
+      resizeObserverRef.current = null;
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       rotationTimeoutsRef.current.forEach(id => clearTimeout(id));
-      
-      // Clean up overlay
+
+      // Clean up
+      document.body.classList.remove('is-rotating');
       const overlay = document.getElementById('rotation-overlay');
       if (overlay) overlay.remove();
+      const styles = document.getElementById('rotation-styles');
+      if (styles) styles.remove();
     };
   }, [onResize, handleOrientationChange, containerRef]);
 
   // 78. FOUC Shield Trigger
   useEffect(() => {
-     if (stageRef.current && !isRotatingRef.current) {
-         requestAnimationFrame(() => {
-             if (stageRef.current) {
-               stageRef.current.style.visibility = 'visible';
-               stageRef.current.style.opacity = '1';
-             }
-         });
-     }
+    if (stageRef.current && !isRotatingRef.current) {
+      requestAnimationFrame(() => {
+        if (stageRef.current) {
+          stageRef.current.style.visibility = 'visible';
+          stageRef.current.style.opacity = '1';
+        }
+      });
+    }
   }, [stageRef]);
 
   return { updateScale };
