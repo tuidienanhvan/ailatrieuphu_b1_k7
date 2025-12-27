@@ -98,13 +98,6 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart }) => {
                                 <ShoppingCart size={20} className="text-slate-400 group-hover:text-[#fbbf24] transition-colors" />
                                 <span className="text-sm font-bold uppercase tracking-[0.2em] text-slate-400 group-hover:text-white transition-colors">Cửa Hàng</span>
                             </button>
-
-                            {/* TEST INPUT - Remove after testing */}
-                            <input
-                                type="text"
-                                placeholder="Test keyboard..."
-                                className="px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/50 text-center"
-                            />
                         </div>
                     </div>
                 </div>
