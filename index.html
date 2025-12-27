@@ -189,41 +189,6 @@
       color: inherit !important;
       outline: none !important;
     }
-
-    /* Rotation handling overlay - always present but hidden */
-    #orientation-mask {
-      position: fixed;
-      inset: 0;
-      z-index: 999999;
-      background-color: #000;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.15s ease-out;
-    }
-
-    /* When JS sets is-rotating class, show the mask */
-    body.is-rotating #orientation-mask,
-    body.is-rotating #root {
-      /* Handled by JS now */
-    }
-
-    /* Pause animations during rotation */
-    body.is-rotating,
-    body.is-rotating * {
-      animation-play-state: paused !important;
-      transition: none !important;
-    }
-
-    body.is-rotating svg animate,
-    body.is-rotating svg animateTransform,
-    body.is-rotating svg animateMotion {
-      animation-play-state: paused !important;
-    }
-
-    #orientation-mask.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
   </style>
 
   <script>
@@ -268,7 +233,6 @@
 </head>
 
 <body oncontextmenu="return false;">
-  <div id="orientation-mask"></div>
   <div id="root"></div>
   <script type="module" src="/index.tsx"></script>
 </body>
