@@ -1,0 +1,222 @@
+
+import React, { useEffect, useCallback, Suspense, lazy, useRef } from 'react';
+import { GameState } from './features/game/types/common';
+import { useGameStore } from './features/game/store/useGameStore';
+import { useFullscreen } from './common/hooks/useFullscreen';
+import { useScaler } from './common/hooks/useScaler';
+import { GameHeader } from './features/game/components/GameHeader';
+import { SidebarPrizes } from './features/game/components/SidebarPrizes';
+import { PRIZES } from './features/game/data/game-constants';
+import { playSound, audioManager } from './features/game/utils/audio-manager';
+import { ErrorBoundary } from './common/components/ErrorBoundary';
+import { LoadingScreen } from './common/components/LoadingScreen';
+
+const WelcomeScreen = lazy(() => import('./pages/WelcomeScreen').then(module => ({ default: module.WelcomeScreen })));
+const PlayScreen = lazy(() => import('./pages/PlayScreen').then(module => ({ default: module.PlayScreen })));
+const ResultScreen = lazy(() => import('./pages/ResultScreen').then(module => ({ default: module.ResultScreen })));
+const ShopScreen = lazy(() => import('./pages/ShopScreen').then(module => ({ default: module.ShopScreen })));
+const HistoryScreen = lazy(() => import('./pages/HistoryScreen').then(module => ({ default: module.HistoryScreen })));
+
+export const App: React.FC = () => {
+  // Refs for the Scale Engine
+  const containerRef = useRef<HTMLDivElement>(null); // Outer viewport layer
+  const stageRef = useRef<HTMLDivElement>(null);     // Inner fixed 1920x1080 stage
+
+  // Hooks
+  const { isFullscreen, toggleFullscreen } = useFullscreen(containerRef);
+
+  // 3, 4, 73. Integrate Scaler Engine (New 3.0 Logic)
+  const { updateScale } = useScaler(containerRef, stageRef, isFullscreen);
+
+  const userInfo = useGameStore(s => s.userInfo);
+  const gameState = useGameStore(s => s.gameState);
+  const currentQIndex = useGameStore(s => s.currentLevel);
+  const finalPrize = useGameStore(s => s.finalPrize);
+  const isLoading = useGameStore(s => s.isLoading);
+
+  // Use new flat actions
+  const fetchAndStartGame = useGameStore(s => s.fetchAndStartGame);
+  const setGameState = useGameStore(s => s.setGameState);
+  const setUserInfo = useGameStore(s => s.setUserInfo);
+
+  const handleStartGame = useCallback(() => {
+    playSound('start');
+    fetchAndStartGame();
+  }, [fetchAndStartGame]);
+
+  // Handle Toggle Shop Logic
+  const handleToggleShop = useCallback(() => {
+    if (gameState === GameState.SHOP) {
+        setGameState(GameState.WELCOME);
+        playSound('select');
+    } else {
+        if (gameState === GameState.WELCOME || gameState === GameState.GAME_OVER || gameState === GameState.VICTORY || gameState === GameState.HISTORY) {
+            setGameState(GameState.SHOP);
+            playSound('select');
+        }
+    }
+  }, [gameState, setGameState]);
+
+  // 49. Comprehensive Visibility Handler (Group E)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        audioManager.pause();
+      } else {
+        audioManager.resume();
+        updateScale(); // Force rescale in case of orientation change while hidden
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [updateScale]);
+
+  // 53. Lifecycle Cleanup (beforeunload, pagehide)
+  useEffect(() => {
+    const handlePageHide = (e: PageTransitionEvent) => {
+      if (!e.persisted) {
+        audioManager.destroy();
+      }
+    };
+
+    const handleBeforeUnload = () => {
+      // save state
+    };
+
+    window.addEventListener('pagehide', handlePageHide);
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('pagehide', handlePageHide);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
+
+  // 51. iOS Audio Unlock on First Interaction
+  useEffect(() => {
+    const unlockAudio = () => {
+      audioManager.unlock();
+      window.removeEventListener('pointerdown', unlockAudio);
+      window.removeEventListener('keydown', unlockAudio);
+    };
+    window.addEventListener('pointerdown', unlockAudio, { passive: true });
+    window.addEventListener('keydown', unlockAudio, { passive: true });
+    return () => {
+      window.removeEventListener('pointerdown', unlockAudio);
+      window.removeEventListener('keydown', unlockAudio);
+    };
+  }, []);
+
+  // 19. Iframe Focus Management
+  useEffect(() => {
+    const handleFocus = () => {
+      if (document.activeElement !== document.body) {
+        window.focus();
+      }
+    };
+    window.addEventListener('click', handleFocus);
+    window.addEventListener('mouseover', handleFocus);
+    window.focus();
+    return () => {
+      window.removeEventListener('click', handleFocus);
+      window.removeEventListener('mouseover', handleFocus);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleMessage = (e: MessageEvent) => {
+      if (e.data?.type === 'MINIGAME_DATA') {
+        // Cập nhật đầy đủ thông tin user từ Parent Window
+        setUserInfo({ 
+            name: e.data.userName || e.data.username, // Hỗ trợ cả 2 naming convention
+            email: e.data.email,
+            userId: e.data.userId,
+            stats: e.data.stats 
+        });
+      }
+    };
+    window.addEventListener('message', handleMessage);
+
+    // Gửi tín hiệu READY ra ngoài để Engine biết và gửi lại User Data
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({ type: 'MINIGAME_READY' }, '*');
+    }
+    return () => window.removeEventListener('message', handleMessage);
+  }, [setUserInfo]);
+
+  return (
+    <ErrorBoundary>
+      {/* 2. Viewport Layer (Groups 0) */}
+      <div
+        ref={containerRef}
+        className={`viewport-layer ${isFullscreen ? 'fs-mode-css' : ''}`}
+      >
+        {/* 1. Stage Layer (Fixed 1920x1080) */}
+        <div
+          ref={stageRef}
+          className="scaling-root"
+          style={{
+            opacity: 0,
+            width: '1920px',
+            height: '1080px',
+            transformOrigin: '0 0'
+          }}
+        >
+          {isLoading && (
+            <LoadingScreen 
+                isOverlay={true} 
+                message="ĐANG TẢI DỮ LIỆU" 
+                subMessage="Kết nối máy chủ Pistudy..." 
+            />
+          )}
+
+          {/* GameHeader luôn hiển thị */}
+          <GameHeader
+            gameState={gameState}
+            isFullscreen={isFullscreen}
+            stats={userInfo.stats}
+            userName={userInfo.name}
+            balance={userInfo.balance}
+            onFullscreen={toggleFullscreen}
+            onOpenShop={handleToggleShop}
+          />
+
+          <div className="flex-1 relative flex flex-row overflow-hidden z-10 w-full h-[calc(1080px-96px)]">
+            <Suspense fallback={<LoadingScreen />}>
+                <div className="flex-1 relative flex flex-col overflow-hidden h-full">
+                    {gameState === GameState.WELCOME && (
+                    <WelcomeScreen onStart={handleStartGame} />
+                    )}
+
+                    {gameState === GameState.PLAYING && (
+                    <PlayScreen />
+                    )}
+
+                    {gameState === GameState.SHOP && (
+                    <ShopScreen />
+                    )}
+
+                    {gameState === GameState.HISTORY && (
+                    <HistoryScreen />
+                    )}
+
+                    {(gameState === GameState.GAME_OVER || gameState === GameState.VICTORY) && (
+                    <ResultScreen
+                        isVictory={gameState === GameState.VICTORY}
+                        prize={finalPrize}
+                        onReset={() => setGameState(GameState.WELCOME)}
+                    />
+                    )}
+                </div>
+
+                {(gameState === GameState.PLAYING || gameState === GameState.VICTORY || gameState === GameState.GAME_OVER) && (
+                    <SidebarPrizes prizes={PRIZES} currentLevel={currentQIndex} />
+                )}
+            </Suspense>
+          </div>
+        </div>
+      </div>
+    </ErrorBoundary>
+  );
+};

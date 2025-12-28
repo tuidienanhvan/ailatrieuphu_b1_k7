@@ -1,0 +1,85 @@
+
+/* 
+  File CSS chính. 
+  Styles Critical Path đã được chuyển vào index.html.
+  File này chỉ chứa style bổ sung nếu cần.
+*/
+
+/* 2. Layer Architecture (Fallback) */
+.viewport-layer {
+  position: fixed;
+  inset: 0;
+  /* Reset in useScaler.ts but kept as fallback */
+  background-color: #000;
+  overflow: hidden;
+  /* Flex centering handled by JS translate in useScaler, strictly fallback here */
+  display: block;
+  /* Anti-flicker for rotation */
+  contain: layout style;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+}
+
+/* 1. Stage Logic (Base styles) */
+.scaling-root {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: #000;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 61. Fullscreen Modes */
+.fs-mode-css {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  z-index: 99999 !important;
+  background: #000 !important;
+  border: none !important;
+  /* 9. Safe Area support */
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+/* 13. GPU Layer Isolation for Scrollables with Effects */
+.scrollable-with-effects {
+  isolation: isolate;
+  transform: translateZ(0);
+  will-change: transform;
+  overscroll-behavior: contain;
+  contain: paint;
+}
+
+/* Utilities */
+.transform-style-3d {
+  transform-style: preserve-3d;
+}
+
+/* Custom Scrollbar - Improved Design */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px; /* Slim width */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 2px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+/* Specific styling for when inside gold contexts if needed, but white/grey is safest global */
