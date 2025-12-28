@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { useGameStore } from '../../store/useGameStore';
 import { playSound } from '../../utils/audio-manager';
-import { useGameAudio } from '../useGameAudio';
+import { useGameAudio } from './useGameAudio';
 import { useGameTimer } from './useGameTimer';
 import { useAnswers } from './useAnswers';
 import { useLifelines } from './useLifelines';
