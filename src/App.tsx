@@ -47,13 +47,13 @@ export const App: React.FC = () => {
   // Handle Toggle Shop Logic
   const handleToggleShop = useCallback(() => {
     if (gameState === GameState.SHOP) {
-        setGameState(GameState.WELCOME);
-        playSound('select');
+      setGameState(GameState.WELCOME);
+      playSound('select');
     } else {
-        if (gameState === GameState.WELCOME || gameState === GameState.GAME_OVER || gameState === GameState.VICTORY || gameState === GameState.HISTORY) {
-            setGameState(GameState.SHOP);
-            playSound('select');
-        }
+      if (gameState === GameState.WELCOME || gameState === GameState.GAME_OVER || gameState === GameState.VICTORY || gameState === GameState.HISTORY) {
+        setGameState(GameState.SHOP);
+        playSound('select');
+      }
     }
   }, [gameState, setGameState]);
 
@@ -128,11 +128,12 @@ export const App: React.FC = () => {
     const handleMessage = (e: MessageEvent) => {
       if (e.data?.type === 'MINIGAME_DATA') {
         // Cập nhật đầy đủ thông tin user từ Parent Window
-        setUserInfo({ 
-            name: e.data.userName || e.data.username, // Hỗ trợ cả 2 naming convention
-            email: e.data.email,
-            userId: e.data.userId,
-            stats: e.data.stats 
+        setUserInfo({
+          name: e.data.userName || e.data.username, // Hỗ trợ cả 2 naming convention
+          email: e.data.email,
+          userId: e.data.userId,
+          stats: e.data.stats,
+          serverHistory: e.data.history || []  // History từ server (RESULT + PURCHASE)
         });
       }
     };
@@ -164,10 +165,10 @@ export const App: React.FC = () => {
           }}
         >
           {isLoading && (
-            <LoadingScreen 
-                isOverlay={true} 
-                message="ĐANG TẢI DỮ LIỆU" 
-                subMessage="Kết nối máy chủ Pistudy..." 
+            <LoadingScreen
+              isOverlay={true}
+              message="ĐANG TẢI DỮ LIỆU"
+              subMessage="Kết nối máy chủ Pistudy..."
             />
           )}
 
@@ -184,35 +185,35 @@ export const App: React.FC = () => {
 
           <div className="flex-1 relative flex flex-row overflow-hidden z-10 w-full h-[calc(1080px-96px)]">
             <Suspense fallback={<LoadingScreen />}>
-                <div className="flex-1 relative flex flex-col overflow-hidden h-full">
-                    {gameState === GameState.WELCOME && (
-                    <WelcomeScreen onStart={handleStartGame} />
-                    )}
-
-                    {gameState === GameState.PLAYING && (
-                    <PlayScreen />
-                    )}
-
-                    {gameState === GameState.SHOP && (
-                    <ShopScreen />
-                    )}
-
-                    {gameState === GameState.HISTORY && (
-                    <HistoryScreen />
-                    )}
-
-                    {(gameState === GameState.GAME_OVER || gameState === GameState.VICTORY) && (
-                    <ResultScreen
-                        isVictory={gameState === GameState.VICTORY}
-                        prize={finalPrize}
-                        onReset={() => setGameState(GameState.WELCOME)}
-                    />
-                    )}
-                </div>
-
-                {(gameState === GameState.PLAYING || gameState === GameState.VICTORY || gameState === GameState.GAME_OVER) && (
-                    <SidebarPrizes prizes={PRIZES} currentLevel={currentQIndex} />
+              <div className="flex-1 relative flex flex-col overflow-hidden h-full">
+                {gameState === GameState.WELCOME && (
+                  <WelcomeScreen onStart={handleStartGame} />
                 )}
+
+                {gameState === GameState.PLAYING && (
+                  <PlayScreen />
+                )}
+
+                {gameState === GameState.SHOP && (
+                  <ShopScreen />
+                )}
+
+                {gameState === GameState.HISTORY && (
+                  <HistoryScreen />
+                )}
+
+                {(gameState === GameState.GAME_OVER || gameState === GameState.VICTORY) && (
+                  <ResultScreen
+                    isVictory={gameState === GameState.VICTORY}
+                    prize={finalPrize}
+                    onReset={() => setGameState(GameState.WELCOME)}
+                  />
+                )}
+              </div>
+
+              {(gameState === GameState.PLAYING || gameState === GameState.VICTORY || gameState === GameState.GAME_OVER) && (
+                <SidebarPrizes prizes={PRIZES} currentLevel={currentQIndex} />
+              )}
             </Suspense>
           </div>
         </div>

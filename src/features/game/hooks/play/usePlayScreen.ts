@@ -1,5 +1,5 @@
 
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useGameStore } from '../../store/useGameStore';
 import { playSound } from '../../utils/audio-manager';
 import { useGameAudio } from '../useGameAudio';
@@ -15,7 +15,10 @@ import { GameState } from '../../types/common';
 export const usePlayScreen = () => {
   const currentLevel = useGameStore(s => s.currentLevel);
   const gameState = useGameStore(s => s.gameState);
-  
+
+  // Track game start time for play duration
+  const gameStartTime = useRef<number>(Date.now());
+
   // Flat actions
   const setGameState = useGameStore(s => s.setGameState);
   const setFinalPrize = useGameStore(s => s.setFinalPrize);
@@ -27,47 +30,64 @@ export const usePlayScreen = () => {
   // Timer logic clean
   const { timer, startTimer, stopTimer, isTimerRunning } = useGameTimer(TIMER_DURATION, gameState, useGameStore(s => s.activeModal));
 
-  const handleGameOver = useCallback((reason: 'wrong' | 'timeout' | 'stop') => {
+  const handleGameOver = useCallback((reason: 'wrong' | 'timeout' | 'stop' | 'victory') => {
     const currentQIndex = useGameStore.getState().currentLevel;
     let prize = '0đ';
     let levelToSave = currentQIndex + 1;
     let gameResult: 'victory' | 'gameover' | 'stop' = 'gameover';
+    let wrongAnswerLevel: number | null = null;
 
-    if (reason === 'stop') {
-        prize = getPrizeAmount(currentQIndex - 1);
-        levelToSave = currentQIndex;
-        gameResult = 'stop';
-        
-        logEvent('GAME_END', { result: 'STOPPED', finalLevel: levelToSave, prize: prize });
-        setGameState(GameState.GAME_OVER);
+    // Calculate play duration in seconds
+    const playDuration = Math.round((Date.now() - gameStartTime.current) / 1000);
+
+    if (reason === 'victory') {
+      // VICTORY - passed all 15 questions
+      prize = getPrizeAmount(14); // PRIZES[14] = level 15 prize
+      levelToSave = 15;
+      gameResult = 'victory';
+      wrongAnswerLevel = null;
+
+      logEvent('GAME_END', { result: 'VICTORY', finalLevel: 15, prize: prize });
+      setGameState(GameState.VICTORY);
+      playSound('win');
+    } else if (reason === 'stop') {
+      prize = getPrizeAmount(currentQIndex - 1);
+      levelToSave = currentQIndex;
+      gameResult = 'stop';
+      wrongAnswerLevel = null;
+
+      logEvent('GAME_END', { result: 'STOPPED', finalLevel: levelToSave, prize: prize });
+      setGameState(GameState.GAME_OVER);
     } else {
-        const safeIndex = calculateFallingPrizeIndex(currentQIndex);
-        prize = getPrizeAmount(safeIndex);
-        levelToSave = safeIndex + 1;
-        gameResult = 'gameover'; // Timeout or Wrong = Game Over
-        
-        logEvent('GAME_END', { result: reason === 'timeout' ? 'TIMEOUT' : 'WRONG_ANSWER', finalLevel: levelToSave, prize: prize });
-        
-        setTimeout(() => {
-            setGameState(GameState.GAME_OVER);
-            playSound('lose');
-        }, 2000);
+      // wrong or timeout
+      const safeIndex = calculateFallingPrizeIndex(currentQIndex);
+      prize = getPrizeAmount(safeIndex);
+      levelToSave = safeIndex + 1;
+      gameResult = 'gameover';
+      wrongAnswerLevel = currentQIndex + 1;
+
+      logEvent('GAME_END', { result: reason === 'timeout' ? 'TIMEOUT' : 'WRONG_ANSWER', finalLevel: levelToSave, prize: prize });
+
+      setTimeout(() => {
+        setGameState(GameState.GAME_OVER);
+        playSound('lose');
+      }, 2000);
     }
 
     setFinalPrize(prize);
 
     // Save to Local Store History
     addMatchToHistory({
-        id: crypto.randomUUID(),
-        timestamp: Date.now(),
-        level: levelToSave,
-        prize: prize,
-        result: gameResult,
-        score: levelToSave * 10
+      id: crypto.randomUUID(),
+      timestamp: Date.now(),
+      level: levelToSave,
+      prize: prize,
+      result: gameResult,
+      score: levelToSave * 10
     });
 
-    // Send to Server/Bridge
-    saveMinigameResult(levelToSave, gameResult);
+    // Send to Server/Bridge with new params
+    saveMinigameResult(gameResult, wrongAnswerLevel, playDuration);
   }, [setFinalPrize, setGameState, logEvent, addMatchToHistory]);
 
   const { selectedAnswer, answerState, handleAnswer } = useAnswers(stopTimer, startTimer, handleGameOver);
@@ -93,10 +113,17 @@ export const usePlayScreen = () => {
     }
   }, [timer, gameState, stopTimer, handleGameOver]);
 
+  // Reset start time when game starts
+  useEffect(() => {
+    if (gameState === GameState.PLAYING && currentLevel === 0) {
+      gameStartTime.current = Date.now();
+    }
+  }, [gameState, currentLevel]);
+
   useEffect(() => {
     setHiddenAnswers(prev => prev.length > 0 ? [] : prev);
     if (gameState === GameState.PLAYING) {
-       startTimer(TIMER_DURATION);
+      startTimer(TIMER_DURATION);
     }
   }, [currentLevel, gameState, setHiddenAnswers, startTimer]);
 

@@ -30,6 +30,39 @@ export interface MatchRecord {
   score: number;
 }
 
+// History record from server (via Engine)
+export interface ServerHistoryRecord {
+  id?: number;
+  msgtype: 'RESULT' | 'PURCHASE' | string;
+  tsms: number;
+  payload: {
+    // Common fields
+    email?: string;
+    userId?: number;
+    username?: string;
+    gameKey?: string;
+
+    // RESULT fields
+    result?: 'victory' | 'gameover' | 'stop';
+    level?: number;
+    score?: number;
+    finalPrize?: number;
+    xp?: number;
+    coin?: number;
+    mateId?: string;
+    playDuration?: number;
+    lifelinesUsed?: string[];
+    wrongAnswerLevel?: number | null;
+
+    // PURCHASE fields
+    itemId?: string;
+    itemName?: string;
+    itemType?: 'lifeline' | 'skin';
+    price?: number;
+    balanceAfter?: number;
+  };
+}
+
 export interface UserInfo {
   userId?: number; // ID định danh từ hệ thống cha
   email?: string;  // Email người chơi
@@ -41,7 +74,8 @@ export interface UserInfo {
     playCount: number;
     bestScore: number;
   };
-  history: MatchRecord[]; // Lịch sử các trận đấu
+  history: MatchRecord[]; // Lịch sử local (mất khi reload)
+  serverHistory: ServerHistoryRecord[]; // Lịch sử từ server (persistent)
 }
 
 export type ItemType = 'skin' | 'lifeline' | 'avatar';
