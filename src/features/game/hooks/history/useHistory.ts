@@ -58,7 +58,7 @@ export const useHistory = () => {
     return {
       totalPlayed: results.length,
       totalWin: results.filter(h => h.payload?.result === 'victory').length,
-      totalPrize: results.reduce((acc, curr) => acc + (curr.payload?.finalPrize || 0), 0),
+      totalPrize: results.reduce((acc, curr) => acc + (curr.payload?.score || 0), 0),
       totalPurchases: purchases.length,
       totalSpent: purchases.reduce((acc, curr) => acc + (curr.payload?.price || 0), 0)
     };

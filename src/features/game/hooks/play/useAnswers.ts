@@ -6,7 +6,8 @@ import { playSound } from '../../utils/audio-manager';
 export const useAnswers = (
   stopTimer: () => void,
   startTimer: (duration?: number) => void,
-  handleGameOver: (reason: 'wrong' | 'victory') => void
+  handleGameOver: (reason: 'wrong' | 'victory') => void,
+  onCorrect?: () => void
 ) => {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [answerState, setAnswerState] = useState<'default' | 'correct' | 'wrong'>('default');
@@ -41,6 +42,7 @@ export const useAnswers = (
       if (isCorrect) {
         setAnswerState('correct');
         playSound('correct');
+        onCorrect?.();
 
         // Wait for correct animation
         setTimeout(() => {

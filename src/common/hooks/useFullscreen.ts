@@ -18,7 +18,7 @@ export const useFullscreen = (containerRef: React.RefObject<HTMLDivElement | nul
     const onFullscreenChange = () => {
       // Native fullscreen change detection
       const fsElement = document.fullscreenElement || (document as any).webkitFullscreenElement;
-      
+
       // Sync state: If we have a native FS element and it matches our container
       if (fsElement && fsElement === containerRef.current) {
         setIsFullscreen(true);
@@ -40,16 +40,16 @@ export const useFullscreen = (containerRef: React.RefObject<HTMLDivElement | nul
         if (e.data.id) setEmbedId(e.data.id);
       }
       if (e.data?.type === 'piaiInit' && e.data.id) {
-         setEmbedId(e.data.id);
+        setEmbedId(e.data.id);
       }
     };
     window.addEventListener('message', onMessage);
-    
+
     // 65. Escape Key Handling for CSS Mode
     const onKeydown = (e: KeyboardEvent) => {
-        if (e.key === 'Escape' && isFullscreen && isIOS) {
-            setIsFullscreen(false);
-        }
+      if (e.key === 'Escape' && isFullscreen && isIOS) {
+        setIsFullscreen(false);
+      }
     };
     document.addEventListener('keydown', onKeydown);
 
@@ -67,19 +67,20 @@ export const useFullscreen = (containerRef: React.RefObject<HTMLDivElement | nul
     const container = containerRef.current;
     if (!container) return;
 
-    // 1. Iframe Parent Request
+    // 1. iOS: Open new tab for true fullscreen experience
+    // iOS Safari doesn't support Fullscreen API - opening standalone tab gives best UX
+    if (isIOS) {
+      window.open(window.location.href, '_blank');
+      return;
+    }
+
+    // 2. Iframe Parent Request (for embedded games)
     if (embedId && window.parent && window.parent !== window) {
       window.parent.postMessage({ type: 'toggleFullscreen', id: embedId }, '*');
       return;
     }
 
-    // 2. iOS CSS Fallback
-    if (isIOS) {
-      setIsFullscreen(prev => !prev);
-      return;
-    }
-
-    // 3. Native API
+    // 3. Native API for non-iOS standalone
     try {
       if (!document.fullscreenElement && !(document as any).webkitFullscreenElement) {
         // Request
@@ -88,8 +89,8 @@ export const useFullscreen = (containerRef: React.RefObject<HTMLDivElement | nul
         } else if ((container as any).webkitRequestFullscreen) {
           await (container as any).webkitRequestFullscreen();
         } else {
-            // Fallback to CSS if API fails/missing
-            setIsFullscreen(true);
+          // Fallback to CSS if API fails/missing
+          setIsFullscreen(true);
         }
       } else {
         // Exit

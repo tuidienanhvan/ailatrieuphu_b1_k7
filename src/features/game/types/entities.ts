@@ -46,7 +46,6 @@ export interface ServerHistoryRecord {
     result?: 'victory' | 'gameover' | 'stop';
     level?: number;
     score?: number;
-    finalPrize?: number;
     xp?: number;
     coin?: number;
     mateId?: string;

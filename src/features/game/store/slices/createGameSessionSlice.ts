@@ -15,14 +15,14 @@ export interface GameSessionSlice {
   backupQuestions: Question[];
   finalPrize: string;
   lifelines: Lifelines;
-  
+
   // Track lifelines used in the current question round
   usedInRound: string[];
 
   // Actions
   setGameState: (state: GameState) => void;
   setFinalPrize: (prize: string) => void;
-  
+
   fetchAndStartGame: () => Promise<void>;
   startGame: (questions: Question[], backups: Question[]) => void;
   nextLevel: () => void;
@@ -44,23 +44,26 @@ export const createGameSessionSlice: StateCreator<GameStoreState, [], [], GameSe
 
   fetchAndStartGame: async () => {
     set({ isLoading: true });
-    
+
+    const MIN_LOADING_MS = 1500;
+    const startTime = Date.now();
+
     const apiData = await fetchQuizData('math_lesson_001');
-    
+
     let questions: Question[];
     let backups: Question[];
 
     if (apiData && apiData.questions.length >= 5) {
       questions = apiData.questions;
       backups = apiData.backups;
-      
+
       if (questions.length < 15) {
-           const needed = 15 - questions.length;
-           const supplemental = shuffleArray([...QUESTIONS]).slice(0, needed);
-           questions = [...questions, ...supplemental];
+        const needed = 15 - questions.length;
+        const supplemental = shuffleArray([...QUESTIONS]).slice(0, needed);
+        questions = [...questions, ...supplemental];
       }
       if (backups.length < 5) {
-           backups = [...backups, ...BACKUP_QUESTIONS];
+        backups = [...backups, ...BACKUP_QUESTIONS];
       }
     } else {
       questions = shuffleArray([...QUESTIONS]).map(q => {
@@ -73,6 +76,12 @@ export const createGameSessionSlice: StateCreator<GameStoreState, [], [], GameSe
       });
     }
 
+    // Ensure minimum loading time for better UX
+    const elapsed = Date.now() - startTime;
+    if (elapsed < MIN_LOADING_MS) {
+      await new Promise(resolve => setTimeout(resolve, MIN_LOADING_MS - elapsed));
+    }
+
     get().startGame(questions, backups);
     set({ isLoading: false });
   },
@@ -80,49 +89,49 @@ export const createGameSessionSlice: StateCreator<GameStoreState, [], [], GameSe
   startGame: (questions, backups) => {
     const state = get();
     const inventory = state.userInfo.inventory;
-    
+
     // Calculate Lifelines based on Inventory
     // Count occurrences in inventory for consumables
     const countItem = (id: string) => inventory.filter(x => x === id).length;
 
     // Reset log
     state.resetLogs();
-    
+
     // Log start game
-    state.logEvent('GAME_START', { 
-        totalQuestions: questions.length,
-        initialBalance: state.userInfo.balance
+    state.logEvent('GAME_START', {
+      totalQuestions: questions.length,
+      initialBalance: state.userInfo.balance
     });
 
     set({
-        gameState: GameState.PLAYING,
-        gameQuestions: questions,
-        backupQuestions: backups,
-        currentLevel: 0,
-        finalPrize: '0đ',
-        showConfetti: false,
-        usedInRound: [], // Reset used items tracking
-        lifelines: { 
-            fiftyFifty: 1 + countItem('extra_5050'),
-            phone: 1 + countItem('extra_phone'), 
-            audience: 1 + countItem('extra_audience'), 
-            askAI: 1, 
-            changeQuestion: 1 + countItem('extra_change_question')
-        },
-        activeModal: 'none',
-        modalData: {}
+      gameState: GameState.PLAYING,
+      gameQuestions: questions,
+      backupQuestions: backups,
+      currentLevel: 0,
+      finalPrize: '0đ',
+      showConfetti: false,
+      usedInRound: [], // Reset used items tracking
+      lifelines: {
+        fiftyFifty: 1 + countItem('extra_5050'),
+        phone: 1 + countItem('extra_phone'),
+        audience: 1 + countItem('extra_audience'),
+        askAI: 1,
+        changeQuestion: 1 + countItem('extra_change_question')
+      },
+      activeModal: 'none',
+      modalData: {}
     });
   },
 
-  nextLevel: () => set((state) => ({ 
-      currentLevel: state.currentLevel + 1,
-      usedInRound: [] // Reset used items when moving to next level
+  nextLevel: () => set((state) => ({
+    currentLevel: state.currentLevel + 1,
+    usedInRound: [] // Reset used items when moving to next level
   })),
-  
+
   useLifeline: (name) => set((state) => ({
-    lifelines: { 
-        ...state.lifelines, 
-        [name]: Math.max(0, state.lifelines[name] - 1) 
+    lifelines: {
+      ...state.lifelines,
+      [name]: Math.max(0, state.lifelines[name] - 1)
     },
     usedInRound: [...state.usedInRound, name] // Mark as used in this round
   })),

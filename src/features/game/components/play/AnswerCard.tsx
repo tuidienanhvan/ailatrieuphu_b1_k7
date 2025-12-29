@@ -16,7 +16,7 @@ export const AnswerCard: React.FC<AnswerCardProps> = ({ label, text, state, onCl
 
   const theme = useMemo(() => {
     switch (state) {
-      case 'selected': 
+      case 'selected':
         return {
           color: '#fbbf24',
           bg: 'from-[#451a03] to-[#1c1917]',
@@ -25,7 +25,7 @@ export const AnswerCard: React.FC<AnswerCardProps> = ({ label, text, state, onCl
           indicator: <Zap size={16} className="text-[#fbbf24] animate-pulse" />,
           status: 'SYSTEM LOCKED'
         };
-      case 'correct': 
+      case 'correct':
         return {
           color: '#22c55e',
           bg: 'from-[#064e3b] to-[#022c22]',
@@ -34,7 +34,7 @@ export const AnswerCard: React.FC<AnswerCardProps> = ({ label, text, state, onCl
           indicator: <ShieldCheck size={16} className="text-[#22c55e] animate-bounce" />,
           status: 'ACCESS GRANTED'
         };
-      case 'wrong': 
+      case 'wrong':
         return {
           color: '#ef4444',
           bg: 'from-[#450a0a] to-[#1c1917]',
@@ -43,7 +43,7 @@ export const AnswerCard: React.FC<AnswerCardProps> = ({ label, text, state, onCl
           indicator: <AlertCircle size={16} className="text-[#ef4444] animate-shake" />,
           status: 'ERROR: INVALID'
         };
-      default: 
+      default:
         return {
           color: '#3b82f6',
           bg: 'from-[#0f172a] to-[#020617]',
@@ -67,64 +67,64 @@ export const AnswerCard: React.FC<AnswerCardProps> = ({ label, text, state, onCl
     >
       {/* Label Box (A, B, C, D) */}
       <div className="relative w-20 shrink-0 flex items-center justify-center z-30">
-          <div 
-            className={`
+        <div
+          className={`
                 w-12 h-12 flex items-center justify-center transition-all duration-500
                 bg-[#020617] border-2 shadow-2xl relative rotate-45 group-hover:rotate-0
                 ${state === 'default' ? 'border-white/10 group-hover:border-blue-400' : theme.border}
             `}
-          >
-              <span className={`
+        >
+          <span className={`
                 text-2xl font-black font-mono tracking-tighter transition-all duration-500
                 ${state === 'default' ? 'text-slate-600 group-hover:text-blue-400' : 'text-white scale-110 -rotate-45 group-hover:-rotate-45'}
                 ${state === 'default' ? '-rotate-45' : ''}
               `}>
-                {label}
-              </span>
-              
-              <div className={`absolute -top-0.5 -right-0.5 w-2 h-2 border border-white/10 ${state === 'default' ? 'bg-slate-800' : ''}`} style={{ backgroundColor: state !== 'default' ? theme.color : undefined }}></div>
-          </div>
+            {label}
+          </span>
+
+          <div className={`absolute -top-0.5 -right-0.5 w-2 h-2 border border-white/10 ${state === 'default' ? 'bg-slate-800' : ''}`} style={{ backgroundColor: state !== 'default' ? theme.color : undefined }}></div>
+        </div>
       </div>
 
       {/* Main Content Box */}
       <div className="relative flex-1 flex items-stretch -ml-6 py-1 pr-4 z-20">
-          <div 
-            className={`
+        <div
+          className={`
                 relative flex-1 flex items-center px-10 transition-all duration-500
                 bg-gradient-to-br backdrop-blur-xl border-y-2 border-r-2
                 ${theme.border} ${theme.bg} ${theme.shadow}
             `}
-            style={{ 
-                clipPath: 'polygon(0% 20%, 30px 0%, 100% 0%, 100% 100%, 0% 100%)'
-            }}
-          >
-              <div className="absolute inset-0 opacity-[0.05] bg-[radial-gradient(circle_at_center,white_1px,transparent_1px)] bg-[size:15px_15px]"></div>
-              
-              {state === 'default' && (
-                  <div className="absolute inset-y-0 -left-full w-full bg-gradient-to-r from-transparent via-blue-400/5 to-transparent group-hover:animate-[shimmer_2s_infinite_linear] pointer-events-none"></div>
-              )}
+          style={{
+            clipPath: 'polygon(0% 20%, 30px 0%, 100% 0%, 100% 100%, 0% 100%)'
+          }}
+        >
+          <div className="absolute inset-0 opacity-[0.05] bg-[radial-gradient(circle_at_center,white_1px,transparent_1px)] bg-[size:15px_15px]"></div>
 
-              {/* Text Container with improved layout and scrollbar */}
-              <div className="flex-1 min-w-0 relative z-10 h-full flex items-center">
-                  <div className={`
+          {state === 'default' && (
+            <div className="absolute inset-y-0 -left-full w-full bg-gradient-to-r from-transparent via-blue-400/5 to-transparent group-hover:animate-[shimmer_2s_infinite_linear] pointer-events-none"></div>
+          )}
+
+          {/* Text Container with improved layout and scrollbar */}
+          <div className="flex-1 min-w-0 relative z-10 h-full flex items-center">
+            <div className={`
                         w-full max-h-full overflow-y-auto custom-scrollbar 
                         text-xl md:text-2xl lg:text-[26px] font-bold tracking-tight 
                         leading-relaxed py-2 pr-2
                         transition-all duration-300 
                         ${state === 'default' ? 'text-slate-400 group-hover:text-white' : 'text-white'}
                   `}>
-                    <LatexDisplay text={text} />
-                  </div>
-              </div>
+              {text && <LatexDisplay text={text} />}
+            </div>
+          </div>
 
-              <div className="shrink-0 flex items-center gap-2 ml-4">
-                  {theme.indicator}
-              </div>
+          <div className="shrink-0 flex items-center gap-2 ml-4">
+            {theme.indicator}
           </div>
-          
-          <div className={`absolute -bottom-1 right-8 px-2 bg-black/80 border border-white/5 text-[7px] font-mono tracking-[0.2em] font-bold ${state === 'default' ? 'text-slate-600' : ''}`} style={{ color: state !== 'default' ? theme.color : undefined }}>
-              {theme.status}
-          </div>
+        </div>
+
+        <div className={`absolute -bottom-1 right-8 px-2 bg-black/80 border border-white/5 text-[7px] font-mono tracking-[0.2em] font-bold ${state === 'default' ? 'text-slate-600' : ''}`} style={{ color: state !== 'default' ? theme.color : undefined }}>
+          {theme.status}
+        </div>
       </div>
 
       <style>{`

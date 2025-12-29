@@ -1,9 +1,9 @@
 
 import React from 'react';
 import { Trophy, Maximize, Minimize, User, ShoppingBag, Wallet, X, History } from 'lucide-react';
-import { GameState } from '../types/common';
-import { useGameHeader } from '../hooks/useGameHeader';
-import { useGameStore } from '../store/useGameStore';
+import { GameState } from '../../types/common';
+import { useGameHeader } from '../../hooks/layout/useGameHeader';
+import { useGameStore } from '../../store/useGameStore';
 
 interface HeaderProps {
   gameState: GameState;

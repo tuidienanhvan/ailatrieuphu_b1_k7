@@ -21,7 +21,7 @@ export const ServerHistoryItem: React.FC<Props> = ({ record }) => {
     });
 
     if (isResult) {
-        const { result, level, finalPrize, xp, coin, playDuration } = record.payload || {};
+        const { result, level, score, xp, coin, playDuration } = record.payload || {};
         const isVictory = result === 'victory';
         const isStop = result === 'stop';
 
@@ -110,7 +110,7 @@ export const ServerHistoryItem: React.FC<Props> = ({ record }) => {
                     >
                         <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: accentColor }}>Thưởng</span>
                         <span className="text-xl font-mono font-black text-white">
-                            {finalPrize ? finalPrize.toLocaleString() : '0'}đ
+                            {score ? score.toLocaleString() : '0'}đ
                         </span>
                     </div>
                 </div>

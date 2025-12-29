@@ -11,6 +11,7 @@ import { TIMER_DURATION } from '../../data/game-constants';
 import { saveMinigameResult } from '../../data/game-api';
 import { calculateFallingPrizeIndex, getPrizeAmount } from '../../../../common/utils/math-helpers';
 import { GameState } from '../../types/common';
+import { useGameEvents } from './useGameEvents';
 
 export const usePlayScreen = () => {
   const currentLevel = useGameStore(s => s.currentLevel);
@@ -26,6 +27,17 @@ export const usePlayScreen = () => {
   const closeModal = useGameStore(s => s.closeModal);
   const logEvent = useGameStore(s => s.logEvent);
   const addMatchToHistory = useGameStore(s => s.addMatchToHistory);
+  const clearEvent = useGameStore(s => s.clearEvent);
+
+  // --- GAME EVENTS ---
+  const { activeEvent, triggerEventCheck } = useGameEvents();
+
+  // Trigger Start Level Event
+  useEffect(() => {
+    if (gameState === GameState.PLAYING) {
+      triggerEventCheck(currentLevel + 1, 'on_start');
+    }
+  }, [currentLevel, gameState, triggerEventCheck]);
 
   // Timer logic clean
   const { timer, startTimer, stopTimer, isTimerRunning } = useGameTimer(TIMER_DURATION, gameState, useGameStore(s => s.activeModal));
@@ -90,8 +102,16 @@ export const usePlayScreen = () => {
     saveMinigameResult(gameResult, wrongAnswerLevel, playDuration);
   }, [setFinalPrize, setGameState, logEvent, addMatchToHistory]);
 
-  const { selectedAnswer, answerState, handleAnswer } = useAnswers(stopTimer, startTimer, handleGameOver);
-  const { hiddenAnswers, setHiddenAnswers, lifelineHandlers } = useLifelines(selectedAnswer, startTimer);
+  const { selectedAnswer, answerState, handleAnswer } = useAnswers(
+    stopTimer,
+    startTimer,
+    handleGameOver,
+    () => {
+      triggerEventCheck(currentLevel + 1, 'on_correct');
+      clearEvent(); // Clear any negative event (like glitch) when passing level
+    }
+  );
+  const { hiddenAnswers, setHiddenAnswers, lifelineHandlers } = useLifelines(selectedAnswer, startTimer, triggerEventCheck);
   const { visualEffects } = useGameModals();
 
   const handleStopGame = useCallback(() => {
@@ -139,6 +159,7 @@ export const usePlayScreen = () => {
       onStopGame: handleStopGame,
       confirmStopGame,
       closeModal
-    }
+    },
+    activeEvent
   };
 };

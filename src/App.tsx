@@ -4,18 +4,23 @@ import { GameState } from './features/game/types/common';
 import { useGameStore } from './features/game/store/useGameStore';
 import { useFullscreen } from './common/hooks/useFullscreen';
 import { useScaler } from './common/hooks/useScaler';
-import { GameHeader } from './features/game/components/GameHeader';
-import { SidebarPrizes } from './features/game/components/SidebarPrizes';
+import { GameHeader } from './features/game/components/layout/GameHeader';
+import { SidebarPrizes } from './features/game/components/play/SidebarPrizes';
 import { PRIZES } from './features/game/data/game-constants';
 import { playSound, audioManager } from './features/game/utils/audio-manager';
 import { ErrorBoundary } from './common/components/ErrorBoundary';
 import { LoadingScreen } from './common/components/LoadingScreen';
 
+// Lazy load components with preload for critical screens
 const WelcomeScreen = lazy(() => import('./pages/WelcomeScreen').then(module => ({ default: module.WelcomeScreen })));
-const PlayScreen = lazy(() => import('./pages/PlayScreen').then(module => ({ default: module.PlayScreen })));
-const ResultScreen = lazy(() => import('./pages/ResultScreen').then(module => ({ default: module.ResultScreen })));
-const ShopScreen = lazy(() => import('./pages/ShopScreen').then(module => ({ default: module.ShopScreen })));
-const HistoryScreen = lazy(() => import('./pages/HistoryScreen').then(module => ({ default: module.HistoryScreen })));
+const PlayScreenPromise = import('./pages/PlayScreen'); // Preload
+const PlayScreen = lazy(() => PlayScreenPromise.then(module => ({ default: module.PlayScreen })));
+const ResultScreenPromise = import('./pages/ResultScreen'); // Preload
+const ResultScreen = lazy(() => ResultScreenPromise.then(module => ({ default: module.ResultScreen })));
+const ShopScreenPromise = import('./pages/ShopScreen'); // Preload
+const ShopScreen = lazy(() => ShopScreenPromise.then(module => ({ default: module.ShopScreen })));
+const HistoryScreenPromise = import('./pages/HistoryScreen'); // Preload
+const HistoryScreen = lazy(() => HistoryScreenPromise.then(module => ({ default: module.HistoryScreen })));
 
 export const App: React.FC = () => {
   // Refs for the Scale Engine
@@ -184,7 +189,7 @@ export const App: React.FC = () => {
           />
 
           <div className="flex-1 relative flex flex-row overflow-hidden z-10 w-full h-[calc(1080px-96px)]">
-            <Suspense fallback={<LoadingScreen />}>
+            <Suspense fallback={null}>
               <div className="flex-1 relative flex flex-col overflow-hidden h-full">
                 {gameState === GameState.WELCOME && (
                   <WelcomeScreen onStart={handleStartGame} />

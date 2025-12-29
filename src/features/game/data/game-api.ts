@@ -170,8 +170,7 @@ export async function saveMinigameResult(
       // Game result
       result: result,
       level: levelReached,
-      score: finalPrize,          // Số tiền (number)
-      finalPrize: finalPrize,     // Duplicate cho rõ ràng
+      score: finalPrize,          // Số tiền (number) - server reads this field
       xp: xp,
       coin: coin,
 

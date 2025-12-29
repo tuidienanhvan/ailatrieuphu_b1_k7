@@ -207,11 +207,15 @@ export const AIConsultModal: React.FC<AIConsultModalProps> = ({ isOpen, isThinki
                     <div className="h-24 shrink-0 border-t border-white/10 bg-[#050505]/90 flex items-center justify-center gap-6 relative z-30">
                         <button
                             onClick={onClose}
-                            className="group relative w-64 h-14 bg-transparent overflow-hidden"
+                            className="group relative w-64 h-14 bg-transparent outline-none"
                         >
-                            <div className="absolute inset-0 border-2 skew-x-[-10deg] transition-all duration-300 group-hover:bg-white/10" style={{ borderColor: COLOR }}></div>
-                            <div className="absolute inset-0 bg-current opacity-0 group-hover:opacity-10 transition-opacity" style={{ color: COLOR }}></div>
+                            {/* Skewed Background/Border */}
+                            <div className="absolute inset-0 border-2 skew-x-[-10deg] transition-all duration-300 group-hover:bg-white/10 group-active:scale-95" style={{ borderColor: COLOR }}></div>
 
+                            {/* Hover Fill */}
+                            <div className="absolute inset-0 bg-current opacity-0 group-hover:opacity-10 transition-opacity skew-x-[-10deg]" style={{ color: COLOR }}></div>
+
+                            {/* Content (Unskewed visually if needed, but here we just center it) */}
                             <div className="absolute inset-0 flex items-center justify-center gap-3">
                                 <Crosshair size={20} style={{ color: COLOR }} className="group-hover:rotate-90 transition-transform duration-500" />
                                 <span className="font-black uppercase tracking-[0.2em] text-sm text-white">Xác Nhận</span>
