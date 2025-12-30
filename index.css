@@ -331,3 +331,14 @@
     transform: skew(0deg);
   }
 }
+
+/* Shimmer Animation for Prize Ladder */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(200%);
+  }
+}

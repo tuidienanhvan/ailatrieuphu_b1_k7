@@ -16,8 +16,10 @@ import { StopGameModal } from '../features/game/components/play/modals/StopGameM
 import { TopHud } from '../features/game/components/play/TopHud';
 import { QuestionBoard } from '../features/game/components/play/QuestionBoard';
 import { AnswerGrid } from '../features/game/components/play/AnswerGrid';
+import { SidebarPrizes } from '../features/game/components/play/SidebarPrizes';
 import { SystemErrorOverlay } from '../features/game/events/pranks/system-error/SystemErrorOverlay';
 import { useSystemError } from '../features/game/events/pranks/system-error/useSystemError';
+import { PRIZES } from '../features/game/data/game-constants';
 
 export const PlayScreen: React.FC = () => {
   const activeModal = useGameStore(s => s.activeModal);
@@ -38,8 +40,10 @@ export const PlayScreen: React.FC = () => {
   // Glitch Sequence Logic (extracted to hook)
   const { showSystemError, isGlitched } = useSystemError();
 
+  const currentLevel = useGameStore(s => s.currentLevel);
+
   return (
-    <div className="flex-1 flex flex-col w-full h-full relative overflow-hidden animate-fade-in bg-black">
+    <div className="flex-1 flex flex-row w-full h-full relative overflow-visible animate-fade-in bg-black">
 
       {/* --- STUDIO BACKGROUND LAYER --- */}
       <div className="absolute inset-0 pointer-events-none z-0">
@@ -89,6 +93,9 @@ export const PlayScreen: React.FC = () => {
           />
         </div>
       </div>
+
+      {/* --- SIDEBAR PRIZES --- */}
+      <SidebarPrizes prizes={PRIZES} currentLevel={currentLevel} />
 
       {/* --- MODALS (Imported Directly) --- */}
       <PhoneModal

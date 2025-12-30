@@ -1,13 +1,15 @@
 
 import React from 'react';
 import { ArrowLeft, History, Gamepad2, ShoppingCart, Crown } from 'lucide-react';
-import { useHistory } from '../features/game/hooks/history/useHistory';
+import { useHistoryScreen } from '../features/game/hooks/history/useHistoryScreen';
+import { useHistoryStatsSidebar } from '../features/game/hooks/history/useHistoryStatsSidebar';
 import { ServerHistoryItem } from '../features/game/components/history/ServerHistoryItem';
 import { HistoryTabButton } from '../features/game/components/history/HistoryTabButton';
 import { HistoryStatsSidebar } from '../features/game/components/history/HistoryStatsSidebar';
 
 export const HistoryScreen: React.FC = () => {
-    const { history, stats, userInfo, activeTab, tabCounts, handleBack, handleTabChange } = useHistory();
+    const { history, serverHistory, userInfo, activeTab, tabCounts, handleBack, handleTabChange } = useHistoryScreen();
+    const { stats } = useHistoryStatsSidebar(serverHistory || []);
 
     return (
         <div className="flex-1 flex flex-col w-full h-full relative overflow-hidden bg-[#020617] select-none">

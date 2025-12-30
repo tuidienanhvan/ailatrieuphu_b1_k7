@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { HistoryTab } from '../../hooks/history/useHistory';
+import { HistoryTab } from '../../hooks/history/useHistoryScreen';
 
 interface Props {
     tab: HistoryTab;
