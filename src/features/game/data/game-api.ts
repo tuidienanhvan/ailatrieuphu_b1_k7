@@ -206,13 +206,11 @@ export async function saveMinigameResult(
       appid: 'minigame-ai-la-trieu-phu',
       clientid: getClientId(),
 
-      // Rewards:
-      // Backend: total_coin = coin_sum(coin + bonus_coin) theo best_score mỗi game
-      // - Nếu score > best_score: Backend dùng coin
-      // - Nếu score <= best_score: Backend dùng bonus_coin
+      // Rewards (giống 2 game mẫu: coin = score, bonus_coin = 0):
+      // Backend: total_coin = SUM(best_coin mỗi game) + SUM(bonus_coin)
       coin: coinReward,
       xp: xp,
-      bonus_coin: coinReward,  // Gửi cả 2 để backend chọn logic phù hợp
+      bonus_coin: 0,
       bonus_xp: 0,
 
       // Game result
