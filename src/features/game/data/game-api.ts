@@ -208,7 +208,7 @@ export async function saveMinigameResult(
 
       coin: coinReward,
       xp: xp,
-      bonus_coin: 0,
+      bonus_coin: Math.round(coinReward * (0.2 + (levelReached / 15) * 0.4)),  // 20% → 60% theo level
       bonus_xp: 0,
 
       // Game result
