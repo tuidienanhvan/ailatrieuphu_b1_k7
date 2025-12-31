@@ -179,12 +179,9 @@ export async function saveMinigameResult(
   // - 'victory'/'gameover': currentLevel + 1
   const levelReached = result === 'stop' ? currentLevel : (currentLevel + 1);
 
-  // Tính XP và Coin dựa trên level
+  // Tính XP và Coin dựa trên level (DELTA - số coin được thưởng thêm)
   const xp = Math.round(levelReached * 100 / 15);
   const coinReward = Math.round((levelReached / 15) * 10000); // Max 10,000 coin ở level 15
-
-  // Tính TOTAL BALANCE mới (backend cần total, không phải delta)
-  const newTotalBalance = userInfo.balance + coinReward;
 
   // Lifelines đã dùng (những cái còn lại < 1 là đã dùng)
   const lifelinesUsed: string[] = [];
@@ -209,14 +206,14 @@ export async function saveMinigameResult(
       appid: 'minigame-ai-la-trieu-phu',
       clientid: getClientId(),
 
-      // Rewards (gửi TOTAL BALANCE mới, không phải delta)
-      coin: newTotalBalance,
+      // Rewards (gửi DELTA - số coin được thưởng, backend sẽ cộng vào total_coins)
+      coin: coinReward,
       xp: xp,
       bonus_coin: 0,
       bonus_xp: 0,
 
       // Game result
-      score: finalPrize,
+      score: levelReached,  // Số level đạt được (backend dùng để tính)
       result: result,
       level: levelReached,
       wrong_answer_level: wrongAnswerLevel,
@@ -229,7 +226,7 @@ export async function saveMinigameResult(
 
   // Cập nhật balance ngay lập tức trong store (không đợi message từ parent)
   const setUserInfo = useGameStore.getState().setUserInfo;
-  setUserInfo({ balance: newTotalBalance });
+  setUserInfo({ balance: userInfo.balance + coinReward });
 }
 
 // ============================================================================
@@ -248,9 +245,6 @@ export async function savePurchaseLog(
   // User identifier for 'user' field
   const userIdentifier = userInfo.email || userInfo.name || 'guest';
 
-  // Tính TOTAL BALANCE mới sau khi mua (backend cần total)
-  const newTotalBalance = userInfo.balance - price;
-
   const purchaseData: MinigameMessage = {
     msgid: generateUUID(),
     msgtype: 'PURCHASE',
@@ -265,7 +259,7 @@ export async function savePurchaseLog(
       item_id: itemId,
       item_name: itemName,
       item_type: itemType,
-      coin: newTotalBalance  // Gửi TOTAL mới, không phải -price
+      coin: -price  // Gửi DELTA âm (số tiền bị trừ), backend sẽ cộng vào total_coins
     }
   };
 
@@ -274,6 +268,6 @@ export async function savePurchaseLog(
 
   // Cập nhật balance ngay lập tức trong store (không đợi message từ parent)
   const setUserInfo = useGameStore.getState().setUserInfo;
-  setUserInfo({ balance: newTotalBalance });
+  setUserInfo({ balance: userInfo.balance - price });
 }
 
