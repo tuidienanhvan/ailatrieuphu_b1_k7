@@ -255,10 +255,17 @@ export async function savePurchaseLog(
       appid: 'minigame-ai-la-trieu-phu',
       clientid: getClientId(),
 
+      // Required fields theo schema
+      coin: 0,
+      xp: 0,
+      bonus_coin: -price,  // Delta âm: trừ tiền mua đồ
+      bonus_xp: 0,
+      score: 0,
+
+      // Purchase specific
       item_id: itemId,
       item_name: itemName,
-      item_type: itemType,
-      bonus_coin: -price  // Delta âm: trừ tiền mua đồ
+      item_type: itemType
     }
   };
 
