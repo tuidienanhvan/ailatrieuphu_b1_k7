@@ -201,13 +201,11 @@ export async function saveMinigameResult(
     tsms: Date.now(),
     user: userIdentifier,
     payload: {
-      // User info
+
       username: userInfo.name || 'guest',
       appid: 'minigame-ai-la-trieu-phu',
       clientid: getClientId(),
 
-      // Rewards (giống 2 game mẫu: coin = score, bonus_coin = 0):
-      // Backend: total_coin = SUM(best_coin mỗi game) + SUM(bonus_coin)
       coin: coinReward,
       xp: xp,
       bonus_coin: 0,
