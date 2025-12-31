@@ -34,7 +34,10 @@ export const QUESTIONS: Question[] = [
 
   // ===== VIẾT DẠNG PHÂN SỐ =====
   { question: "Số thập phân $-0{,}75$ viết dưới dạng phân số tối giản là:", answers: ["$\\frac{-75}{100}$", "$\\frac{-3}{4}$", "$\\frac{3}{4}$", "$\\frac{-15}{20}$"], correct: 1 },
-  { question: "Hỗn số $-2\\frac{1}{3}$ bằng phân số nào?", answers: ["$\\frac{-5}{3}$", "$\\frac{-7}{3}$", "$\\frac{7}{3}$", "$\\frac{-1}{3}$"], correct: 1 }
+  { question: "Hỗn số $-2\\frac{1}{3}$ bằng phân số nào?", answers: ["$\\frac{-5}{3}$", "$\\frac{-7}{3}$", "$\\frac{7}{3}$", "$\\frac{-1}{3}$"], correct: 1 },
+
+  // ===== CÂU TỔNG HỢP =====
+  { question: "Tổng của một số hữu tỉ và số đối của nó bằng:", answers: ["$1$", "$-1$", "$0$", "Số hữu tỉ đó"], correct: 2 }
 ];
 
 export const BACKUP_QUESTIONS: Question[] = [

@@ -206,14 +206,16 @@ export async function saveMinigameResult(
       appid: 'minigame-ai-la-trieu-phu',
       clientid: getClientId(),
 
-      // Rewards (gửi DELTA - số coin được thưởng, backend sẽ cộng vào total_coins)
-      coin: coinReward,
+      // Rewards:
+      // - coin = điểm cao nhất (backend dùng cho highscore)
+      // - bonus_coin = delta thưởng (backend cộng vào total_coins)
+      coin: levelReached,
       xp: xp,
-      bonus_coin: 0,
+      bonus_coin: coinReward,  // Delta thưởng: +667, +1333, +10000...
       bonus_xp: 0,
 
       // Game result
-      score: levelReached,  // Số level đạt được (backend dùng để tính)
+      score: levelReached,
       result: result,
       level: levelReached,
       wrong_answer_level: wrongAnswerLevel,
@@ -259,7 +261,7 @@ export async function savePurchaseLog(
       item_id: itemId,
       item_name: itemName,
       item_type: itemType,
-      coin: -price  // Gửi DELTA âm (số tiền bị trừ), backend sẽ cộng vào total_coins
+      bonus_coin: -price  // Delta âm: trừ tiền mua đồ
     }
   };
 
