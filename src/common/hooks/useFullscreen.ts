@@ -62,13 +62,12 @@ export const useFullscreen = (containerRef: React.RefObject<HTMLDivElement | nul
     };
   }, [containerRef, isFullscreen, isIOS]);
 
-  // 62. Toggle Logic with Fallback Chain
-  const toggleFullscreen = useCallback(async () => {
+  // 62. Toggle Logic with Fallback Chain - SYNCHRONOUS to preserve user gesture
+  const toggleFullscreen = useCallback(() => {
     const container = containerRef.current;
     if (!container) return;
 
     // 1. iOS: Open new tab for true fullscreen experience
-    // iOS Safari doesn't support Fullscreen API - opening standalone tab gives best UX
     if (isIOS) {
       window.open(window.location.href, '_blank');
       return;
@@ -80,30 +79,35 @@ export const useFullscreen = (containerRef: React.RefObject<HTMLDivElement | nul
       return;
     }
 
-    // 3. Native API for non-iOS standalone
-    try {
-      if (!document.fullscreenElement && !(document as any).webkitFullscreenElement) {
-        // Request
-        if (container.requestFullscreen) {
-          await container.requestFullscreen();
-        } else if ((container as any).webkitRequestFullscreen) {
-          await (container as any).webkitRequestFullscreen();
-        } else {
-          // Fallback to CSS if API fails/missing
+    // 3. Native API for non-iOS standalone - MUST be synchronous!
+    const fsElement = document.fullscreenElement || (document as any).webkitFullscreenElement;
+
+    if (!fsElement) {
+      // Request fullscreen - call immediately, handle result in .then()
+      const fsPromise = container.requestFullscreen
+        ? container.requestFullscreen()
+        : (container as any).webkitRequestFullscreen?.();
+
+      if (fsPromise) {
+        fsPromise.catch((err: Error) => {
+          console.warn("Fullscreen API failed, falling back to CSS mode", err);
           setIsFullscreen(true);
-        }
+        });
       } else {
-        // Exit
-        if (document.exitFullscreen) {
-          await document.exitFullscreen();
-        } else if ((document as any).webkitExitFullscreen) {
-          await (document as any).webkitExitFullscreen();
-        }
+        // No API available - use CSS fallback
+        setIsFullscreen(true);
+      }
+    } else {
+      // Exit fullscreen
+      const exitPromise = document.exitFullscreen
+        ? document.exitFullscreen()
+        : (document as any).webkitExitFullscreen?.();
+
+      if (exitPromise) {
+        exitPromise.catch(() => setIsFullscreen(false));
+      } else {
         setIsFullscreen(false);
       }
-    } catch (err) {
-      console.warn("Fullscreen API failed, falling back to CSS mode", err);
-      setIsFullscreen(prev => !prev);
     }
   }, [embedId, isIOS]);
 

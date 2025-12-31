@@ -48,7 +48,7 @@ export const createGameSessionSlice: StateCreator<GameStoreState, [], [], GameSe
     const MIN_LOADING_MS = 1500;
     const startTime = Date.now();
 
-    const apiData = await fetchQuizData('math_lesson_001');
+    const apiData = await fetchQuizData('toan_6_hk1');
 
     let questions: Question[];
     let backups: Question[];

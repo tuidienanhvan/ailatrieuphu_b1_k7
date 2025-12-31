@@ -22,6 +22,40 @@ interface PistudyResponse {
   };
 }
 
+// NEW: Message structure interface
+interface MinigameMessage {
+  msgid: string;
+  msgtype: 'RESULT' | 'PURCHASE';
+  key: string;
+  tsms: number;
+  user: string;
+  payload: Record<string, any>;
+}
+
+// ============================================================================
+// HELPER: Generate UUID v4
+// ============================================================================
+function generateUUID(): string {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
+// ============================================================================
+// HELPER: Get Client ID (browser fingerprint)
+// ============================================================================
+function getClientId(): string {
+  // Check localStorage for existing clientId
+  let clientId = localStorage.getItem('minigame_client_id');
+  if (!clientId) {
+    clientId = `browser-${generateUUID().slice(0, 8)}`;
+    localStorage.setItem('minigame_client_id', clientId);
+  }
+  return clientId;
+}
+
 // ============================================================================
 // HELPER: Parse prize string to number
 // "200,000đ" → 200000
@@ -43,7 +77,7 @@ function getPrizeByLevel(levelIndex: number): number {
 // ============================================================================
 // HELPER: Send to Bridge
 // ============================================================================
-function sendToBridge(data: any) {
+function sendToBridge(data: MinigameMessage) {
   const bridgePayload = {
     type: 'MINIGAME_ACTION',
     action: 'SAVE_RESULT',
@@ -52,7 +86,7 @@ function sendToBridge(data: any) {
 
   if (typeof window !== 'undefined' && window.parent && window.parent !== window) {
     window.parent.postMessage(bridgePayload, '*');
-    console.log("[GameAPI] Sent to bridge:", data.msgtype, data.payload);
+    console.log("[GameAPI] Sent to bridge:", data.msgtype, data.msgid);
   } else {
     const isLocal = typeof window !== 'undefined' &&
       (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
@@ -120,10 +154,11 @@ export async function fetchQuizData(mateId: string = 'math_lesson_001'): Promise
 
 // ============================================================================
 // SAVE GAME RESULT (msgtype: RESULT)
-// Params:
-//   - result: 'victory' | 'gameover' | 'stop'
-//   - wrongAnswerLevel: câu trả lời sai (null nếu stop/victory)
-//   - playDuration: thời gian chơi (giây)
+// NEW STRUCTURE:
+// {
+//   msgid, msgtype, key, tsms, user,
+//   payload: { username, appid, clientid, coin, xp, bonus_coin, bonus_xp, score, result, level, wrong_answer_level, lifelines_used }
+// }
 // ============================================================================
 export async function saveMinigameResult(
   result: 'victory' | 'gameover' | 'stop',
@@ -142,9 +177,9 @@ export async function saveMinigameResult(
   // Level đạt được (1-15 cho hiển thị)
   const levelReached = currentLevel + 1;
 
-  // Tính XP và Coin dựa trên level (max 100, max 1000)
+  // Tính XP và Coin dựa trên level
   const xp = Math.round(levelReached * 100 / 15);
-  const coin = Math.round(levelReached * 1000 / 15);
+  const coin = Math.round(levelReached * 1000000000 / 15); // 1 tỷ coin khi hoàn thành
 
   // Lifelines đã dùng (những cái còn lại < 1 là đã dùng)
   const lifelinesUsed: string[] = [];
@@ -154,31 +189,33 @@ export async function saveMinigameResult(
   if (lifelines.askAI < 1) lifelinesUsed.push('askAI');
   if (lifelines.changeQuestion < 1) lifelinesUsed.push('changeQuestion');
 
-  // mateId từ env (nếu có)
-  const mateId = (userInfo as any).mateId || 'math_lesson_001';
+  // User identifier for 'user' field
+  const userIdentifier = userInfo.email || userInfo.name || 'guest';
 
-  const resultData = {
+  const resultData: MinigameMessage = {
+    msgid: generateUUID(),
     msgtype: 'RESULT',
+    key: '',
     tsms: Date.now(),
+    user: userIdentifier,
     payload: {
       // User info
-      email: userInfo.email || '',
-      userId: userInfo.userId || 0,
       username: userInfo.name || 'guest',
-      gameKey: 'minigame-ai-la-trieu-phu',
+      appid: 'minigame-ai-la-trieu-phu',
+      clientid: getClientId(),
+
+      // Rewards
+      coin: coin,
+      xp: xp,
+      bonus_coin: 0,
+      bonus_xp: 0,
 
       // Game result
+      score: finalPrize,
       result: result,
       level: levelReached,
-      score: finalPrize,          // Số tiền (number) - server reads this field
-      xp: xp,
-      coin: coin,
-
-      // Gameplay details
-      mateId: mateId,
-      playDuration: playDuration,
-      lifelinesUsed: lifelinesUsed,
-      wrongAnswerLevel: wrongAnswerLevel
+      wrong_answer_level: wrongAnswerLevel,
+      lifelines_used: lifelinesUsed
     }
   };
 
@@ -188,6 +225,7 @@ export async function saveMinigameResult(
 
 // ============================================================================
 // SAVE PURCHASE LOG (msgtype: PURCHASE)
+// NEW STRUCTURE following same pattern
 // ============================================================================
 export async function savePurchaseLog(
   itemId: string,
@@ -198,23 +236,28 @@ export async function savePurchaseLog(
   const state = useGameStore.getState();
   const userInfo = state.userInfo;
 
-  const purchaseData = {
-    msgtype: 'PURCHASE',
-    tsms: Date.now(),
-    payload: {
-      email: userInfo.email || '',
-      userId: userInfo.userId || 0,
-      username: userInfo.name || 'guest',
-      gameKey: 'minigame-ai-la-trieu-phu',
+  // User identifier for 'user' field
+  const userIdentifier = userInfo.email || userInfo.name || 'guest';
 
-      itemId: itemId,
-      itemName: itemName,
-      itemType: itemType,
-      price: price,
-      balanceAfter: userInfo.balance - price
+  const purchaseData: MinigameMessage = {
+    msgid: generateUUID(),
+    msgtype: 'PURCHASE',
+    key: '',
+    tsms: Date.now(),
+    user: userIdentifier,
+    payload: {
+      username: userInfo.name || 'guest',
+      appid: 'minigame-ai-la-trieu-phu',
+      clientid: getClientId(),
+
+      item_id: itemId,
+      item_name: itemName,
+      item_type: itemType,
+      coin: -price  // Negative = spending
     }
   };
 
   console.log("[GameAPI] Saving PURCHASE:", purchaseData);
   sendToBridge(purchaseData);
 }
+

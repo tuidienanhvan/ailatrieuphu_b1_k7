@@ -113,18 +113,16 @@ export const App: React.FC = () => {
     };
   }, []);
 
-  // 19. Iframe Focus Management
+  // 19. Iframe Focus Management - mouseover only (click removed to not interfere with fullscreen)
   useEffect(() => {
     const handleFocus = () => {
       if (document.activeElement !== document.body) {
         window.focus();
       }
     };
-    window.addEventListener('click', handleFocus);
     window.addEventListener('mouseover', handleFocus);
     window.focus();
     return () => {
-      window.removeEventListener('click', handleFocus);
       window.removeEventListener('mouseover', handleFocus);
     };
   }, []);
