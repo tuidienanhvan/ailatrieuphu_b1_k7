@@ -135,6 +135,7 @@ export const App: React.FC = () => {
           name: e.data.userName || e.data.username, // Hỗ trợ cả 2 naming convention
           email: e.data.userEmail || e.data.email || '', // Engine gửi userEmail
           userId: e.data.userId || null,
+          balance: e.data.total_coins || e.data.balance || 0, // Đồng bộ từ user-stats API
           stats: e.data.stats || { playCount: 0, bestScore: 0 },
           serverHistory: e.data.history || []  // History từ server (RESULT + PURCHASE)
         });
@@ -142,6 +143,7 @@ export const App: React.FC = () => {
           userName: e.data.userName,
           userEmail: e.data.userEmail,
           userId: e.data.userId,
+          balance: e.data.total_coins || e.data.balance,
           stats: e.data.stats,
           historyCount: e.data.history?.length || 0
         });

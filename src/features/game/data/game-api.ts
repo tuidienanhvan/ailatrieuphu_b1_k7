@@ -179,7 +179,7 @@ export async function saveMinigameResult(
 
   // Tính XP và Coin dựa trên level
   const xp = Math.round(levelReached * 100 / 15);
-  const coin = Math.round(levelReached * 1000000000 / 15); // 1 tỷ coin khi hoàn thành
+  const coin = levelReached * 100000; // 100k coin mỗi câu
 
   // Lifelines đã dùng (những cái còn lại < 1 là đã dùng)
   const lifelinesUsed: string[] = [];
