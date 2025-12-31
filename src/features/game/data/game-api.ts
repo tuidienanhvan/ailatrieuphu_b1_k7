@@ -181,7 +181,7 @@ export async function saveMinigameResult(
 
   // Tính XP và Coin dựa trên level
   const xp = Math.round(levelReached * 100 / 15);
-  const coinReward = levelReached * 100000; // Coin thưởng (delta)
+  const coinReward = Math.round((levelReached / 15) * 10000); // Max 10,000 coin ở level 15
 
   // Tính TOTAL BALANCE mới (backend cần total, không phải delta)
   const newTotalBalance = userInfo.balance + coinReward;
