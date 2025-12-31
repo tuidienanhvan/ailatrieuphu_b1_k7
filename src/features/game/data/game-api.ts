@@ -174,12 +174,17 @@ export async function saveMinigameResult(
   // Parse prize string to number
   const finalPrize = getPrizeNumber(finalPrizeStr);
 
-  // Level đạt được (1-15 cho hiển thị)
-  const levelReached = currentLevel + 1;
+  // Level đạt được:
+  // - 'stop': currentLevel là câu hiện tại (đã qua câu trước), không cộng 1
+  // - 'victory'/'gameover': currentLevel + 1
+  const levelReached = result === 'stop' ? currentLevel : (currentLevel + 1);
 
   // Tính XP và Coin dựa trên level
   const xp = Math.round(levelReached * 100 / 15);
-  const coin = levelReached * 100000; // 100k coin mỗi câu
+  const coinReward = levelReached * 100000; // Coin thưởng (delta)
+
+  // Tính TOTAL BALANCE mới (backend cần total, không phải delta)
+  const newTotalBalance = userInfo.balance + coinReward;
 
   // Lifelines đã dùng (những cái còn lại < 1 là đã dùng)
   const lifelinesUsed: string[] = [];
@@ -204,8 +209,8 @@ export async function saveMinigameResult(
       appid: 'minigame-ai-la-trieu-phu',
       clientid: getClientId(),
 
-      // Rewards
-      coin: coin,
+      // Rewards (gửi TOTAL BALANCE mới, không phải delta)
+      coin: newTotalBalance,
       xp: xp,
       bonus_coin: 0,
       bonus_xp: 0,
@@ -239,6 +244,9 @@ export async function savePurchaseLog(
   // User identifier for 'user' field
   const userIdentifier = userInfo.email || userInfo.name || 'guest';
 
+  // Tính TOTAL BALANCE mới sau khi mua (backend cần total)
+  const newTotalBalance = userInfo.balance - price;
+
   const purchaseData: MinigameMessage = {
     msgid: generateUUID(),
     msgtype: 'PURCHASE',
@@ -253,7 +261,7 @@ export async function savePurchaseLog(
       item_id: itemId,
       item_name: itemName,
       item_type: itemType,
-      coin: -price  // Negative = spending
+      coin: newTotalBalance  // Gửi TOTAL mới, không phải -price
     }
   };
 
