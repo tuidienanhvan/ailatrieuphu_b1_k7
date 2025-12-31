@@ -207,15 +207,16 @@ export async function saveMinigameResult(
       clientid: getClientId(),
 
       // Rewards:
-      // - coin = điểm cao nhất (backend dùng cho highscore)
-      // - bonus_coin = delta thưởng (backend cộng vào total_coins)
-      coin: levelReached,
+      // Backend: total_coin = coin_sum(coin + bonus_coin) theo best_coin mỗi game
+      // - coin = số coin tương ứng với level (backend lấy best_coin)
+      // - bonus_coin = 0 (thưởng đã tính trong coin)
+      coin: coinReward,
       xp: xp,
-      bonus_coin: coinReward,  // Delta thưởng: +667, +1333, +10000...
+      bonus_coin: 0,
       bonus_xp: 0,
 
       // Game result
-      score: levelReached,
+      score: levelReached,  // Backend lấy highest score để xác định best_coin
       result: result,
       level: levelReached,
       wrong_answer_level: wrongAnswerLevel,
