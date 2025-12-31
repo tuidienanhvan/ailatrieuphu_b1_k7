@@ -130,12 +130,19 @@ export const App: React.FC = () => {
   useEffect(() => {
     const handleMessage = (e: MessageEvent) => {
       if (e.data?.type === 'MINIGAME_DATA') {
+        const state = useGameStore.getState();
+        const incomingBalance = e.data.total_coins || e.data.balance || 0;
+
+        // Chỉ update balance nếu giá trị từ server LỚN HƠN giá trị hiện tại
+        // (tránh rollback khi server chưa lưu kịp)
+        const newBalance = Math.max(state.userInfo.balance, incomingBalance);
+
         // Cập nhật đầy đủ thông tin user từ Parent Window (Engine v3.15.0)
         setUserInfo({
           name: e.data.userName || e.data.username, // Hỗ trợ cả 2 naming convention
           email: e.data.userEmail || e.data.email || '', // Engine gửi userEmail
           userId: e.data.userId || null,
-          balance: e.data.total_coins || e.data.balance || 0, // Đồng bộ từ user-stats API
+          balance: newBalance, // Lấy giá trị LỚN HƠN
           stats: e.data.stats || { playCount: 0, bestScore: 0 },
           serverHistory: e.data.history || []  // History từ server (RESULT + PURCHASE)
         });
@@ -143,7 +150,8 @@ export const App: React.FC = () => {
           userName: e.data.userName,
           userEmail: e.data.userEmail,
           userId: e.data.userId,
-          balance: e.data.total_coins || e.data.balance,
+          balance: newBalance,
+          incomingBalance: incomingBalance,
           stats: e.data.stats,
           historyCount: e.data.history?.length || 0
         });
