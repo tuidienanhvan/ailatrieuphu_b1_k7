@@ -44,10 +44,49 @@ function generateUUID(): string {
 }
 
 // ============================================================================
-// HELPER: Get Client ID (browser fingerprint)
+// HELPER: Get Client ID (course ID from URL/referrer)
 // ============================================================================
 function getClientId(): string {
-  // Check localStorage for existing clientId
+  // Try to extract course ID from various sources
+  try {
+    // 1. Try from document.referrer (parent page URL)
+    const referrer = document.referrer || '';
+    const courseMatch = referrer.match(/course-v1:[^/+&]+\+[^/+&]+\+[^/+&]+/);
+    if (courseMatch) {
+      return courseMatch[0];
+    }
+
+    // 2. Try from URL search params
+    const urlParams = new URLSearchParams(window.location.search);
+    const courseParam = urlParams.get('course_id') || urlParams.get('courseId');
+    if (courseParam) {
+      return courseParam;
+    }
+
+    // 3. Try from parent window location (if same origin)
+    try {
+      if (window.parent && window.parent !== window) {
+        const parentUrl = window.parent.location.href;
+        const parentMatch = parentUrl.match(/course-v1:[^/+&]+\+[^/+&]+\+[^/+&]+/);
+        if (parentMatch) {
+          return parentMatch[0];
+        }
+      }
+    } catch (e) {
+      // Cross-origin, can't access parent location
+    }
+
+    // 4. Fallback to localStorage cached value
+    const cached = localStorage.getItem('minigame_course_id');
+    if (cached && cached.startsWith('course-v1:')) {
+      return cached;
+    }
+
+  } catch (e) {
+    console.warn('[GameAPI] Error getting course ID:', e);
+  }
+
+  // Fallback to browser fingerprint
   let clientId = localStorage.getItem('minigame_client_id');
   if (!clientId) {
     clientId = `browser-${generateUUID().slice(0, 8)}`;
