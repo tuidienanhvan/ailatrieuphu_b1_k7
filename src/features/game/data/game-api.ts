@@ -226,6 +226,10 @@ export async function saveMinigameResult(
 
   console.log("[GameAPI] Saving RESULT:", resultData);
   sendToBridge(resultData);
+
+  // Cập nhật balance ngay lập tức trong store (không đợi message từ parent)
+  const setUserInfo = useGameStore.getState().setUserInfo;
+  setUserInfo({ balance: newTotalBalance });
 }
 
 // ============================================================================
@@ -267,5 +271,9 @@ export async function savePurchaseLog(
 
   console.log("[GameAPI] Saving PURCHASE:", purchaseData);
   sendToBridge(purchaseData);
+
+  // Cập nhật balance ngay lập tức trong store (không đợi message từ parent)
+  const setUserInfo = useGameStore.getState().setUserInfo;
+  setUserInfo({ balance: newTotalBalance });
 }
 
