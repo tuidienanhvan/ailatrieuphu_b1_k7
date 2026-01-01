@@ -22,13 +22,10 @@ interface PistudyResponse {
   };
 }
 
-// NEW: Message structure interface
+// Message structure interface (đơn giản hóa - engine sẽ thêm các field còn lại)
 interface MinigameMessage {
-  msgid: string;
   msgtype: 'RESULT' | 'PURCHASE';
-  key: string;
   tsms: number;
-  user: string;
   payload: Record<string, any>;
 }
 
@@ -44,55 +41,175 @@ function generateUUID(): string {
 }
 
 // ============================================================================
-// HELPER: Get Client ID (course ID from URL/referrer)
+// HELPER: Get Course ID (clientid) - Logic từ game mẫu Đua Xe
 // ============================================================================
-function getClientId(): string {
-  // Try to extract course ID from various sources
+function getCourseId(): string {
+  // 1. Try from window.location pathname
   try {
-    // 1. Try from document.referrer (parent page URL)
+    const path = window.location?.pathname || '';
+    const parts = path.split('/');
+    for (const seg of parts) {
+      if (!seg) continue;
+      if (seg.indexOf('course-v1:') === 0) {
+        return seg;
+      }
+      if (seg.indexOf('block-v1:') === 0) {
+        const s = seg.substring('block-v1:'.length);
+        const tp = s.indexOf('+type');
+        const coursePart = tp !== -1 ? s.substring(0, tp) : s;
+        if (coursePart) return 'course-v1:' + coursePart;
+      }
+    }
+  } catch (e) { /* ignore */ }
+
+  // 2. Try from document.referrer
+  try {
     const referrer = document.referrer || '';
-    const courseMatch = referrer.match(/course-v1:[^/+&]+\+[^/+&]+\+[^/+&]+/);
-    if (courseMatch) {
-      return courseMatch[0];
-    }
-
-    // 2. Try from URL search params
-    const urlParams = new URLSearchParams(window.location.search);
-    const courseParam = urlParams.get('course_id') || urlParams.get('courseId');
-    if (courseParam) {
-      return courseParam;
-    }
-
-    // 3. Try from parent window location (if same origin)
-    try {
-      if (window.parent && window.parent !== window) {
-        const parentUrl = window.parent.location.href;
-        const parentMatch = parentUrl.match(/course-v1:[^/+&]+\+[^/+&]+\+[^/+&]+/);
-        if (parentMatch) {
-          return parentMatch[0];
+    if (referrer) {
+      const url = new URL(referrer);
+      const parts = url.pathname.split('/');
+      for (const seg of parts) {
+        if (!seg) continue;
+        if (seg.indexOf('course-v1:') === 0) return seg;
+        if (seg.indexOf('block-v1:') === 0) {
+          const s = seg.substring('block-v1:'.length);
+          const tp = s.indexOf('+type');
+          const coursePart = tp !== -1 ? s.substring(0, tp) : s;
+          if (coursePart) return 'course-v1:' + coursePart;
         }
       }
-    } catch (e) {
-      // Cross-origin, can't access parent location
     }
+  } catch (e) { /* ignore */ }
 
-    // 4. Fallback to localStorage cached value
-    const cached = localStorage.getItem('minigame_course_id');
-    if (cached && cached.startsWith('course-v1:')) {
-      return cached;
+  // 3. Try from ancestor frames (same-origin)
+  try {
+    let anc: Window = window;
+    let depth = 0;
+    while (anc && anc !== anc.parent && depth < 6) {
+      try {
+        const ap = anc.location?.pathname || '';
+        if (ap) {
+          const aparts = ap.split('/');
+          for (const segA of aparts) {
+            if (!segA) continue;
+            if (segA.indexOf('course-v1:') === 0) return segA;
+            if (segA.indexOf('block-v1:') === 0) {
+              const ss = segA.substring('block-v1:'.length);
+              const tpos = ss.indexOf('+type');
+              const cpart = tpos !== -1 ? ss.substring(0, tpos) : ss;
+              if (cpart) return 'course-v1:' + cpart;
+            }
+          }
+        }
+      } catch (e) { /* cross-origin */ }
+      try { anc = anc.parent; } catch (e) { break; }
+      depth++;
     }
+  } catch (e) { /* ignore */ }
 
-  } catch (e) {
-    console.warn('[GameAPI] Error getting course ID:', e);
+  // 4. Fallback to localStorage cache
+  const cached = localStorage.getItem('minigame_course_id');
+  if (cached && cached.startsWith('course-v1:')) {
+    return cached;
   }
 
-  // Fallback to browser fingerprint
+  // 5. Final fallback to browser fingerprint
   let clientId = localStorage.getItem('minigame_client_id');
   if (!clientId) {
     clientId = `browser-${generateUUID().slice(0, 8)}`;
     localStorage.setItem('minigame_client_id', clientId);
   }
   return clientId;
+}
+
+// Alias for backward compatibility
+function getClientId(): string {
+  return getCourseId();
+}
+
+// ============================================================================
+// HELPER: Get API Base URL (từ game mẫu Đua Xe)
+// ============================================================================
+function getMinigameApiBase(): string | null {
+  let origin = '';
+  try {
+    origin = window.location?.origin || '';
+  } catch (e) {
+    origin = '';
+  }
+
+  if (!origin || origin === 'null' || origin.indexOf('blob:') === 0) {
+    try {
+      if (document?.referrer) {
+        origin = new URL(document.referrer).origin;
+      }
+    } catch (e) {
+      origin = '';
+    }
+  }
+
+  if ((!origin || origin === 'null') && window.parent?.location) {
+    try {
+      origin = window.parent.location.origin;
+    } catch (e) {
+      // cross-origin
+    }
+  }
+
+  if (!origin || origin === 'null') return null;
+
+  // Nếu ở Studio thì chuyển sang domain chính
+  if (origin.indexOf('://studio.') > -1) {
+    origin = origin.replace('://studio.', '://');
+  }
+
+  while (origin.endsWith('/')) origin = origin.slice(0, -1);
+  return origin + '/api/minigames/';
+}
+
+// ============================================================================
+// FETCH MINIGAME STATS (lần chơi, kỷ lục) - Logic từ game mẫu Đua Xe
+// ============================================================================
+export async function fetchMinigameStats(): Promise<{ playCount: number; bestScore: number } | null> {
+  const API_BASE = getMinigameApiBase();
+  if (!API_BASE) return null;
+
+  try {
+    // Ưu tiên fetch từ parent nếu có
+    let fetchFn: typeof fetch = fetch;
+    try {
+      if (window.parent?.fetch) {
+        fetchFn = window.parent.fetch.bind(window.parent);
+      }
+    } catch (e) { /* ignore */ }
+
+    const res = await fetchFn(API_BASE + 'logs/', { credentials: 'include' });
+    if (!res.ok) return null;
+
+    const data = await res.json();
+    const rows = Array.isArray(data) ? data : (Array.isArray(data.results) ? data.results : []);
+
+    let playCount = 0;
+    let bestScore = 0;
+
+    rows.forEach((row: any) => {
+      if (!row || typeof row !== 'object') return;
+      const p = row.payload || {};
+      const appKey = p.gameKey || p.appid || null;
+
+      // Match game này
+      if (appKey === 'minigame-ai-la-trieu-phu') {
+        playCount += 1;
+        const s = Number(p.score || p.bestScore || p.lastScore || 0);
+        if (s > bestScore) bestScore = s;
+      }
+    });
+
+    return { playCount, bestScore };
+  } catch (e) {
+    console.warn('[GameAPI] fetchMinigameStats skip', e);
+    return null;
+  }
 }
 
 // ============================================================================
@@ -125,7 +242,7 @@ function sendToBridge(data: MinigameMessage) {
 
   if (typeof window !== 'undefined' && window.parent && window.parent !== window) {
     window.parent.postMessage(bridgePayload, '*');
-    console.log("[GameAPI] Sent to bridge:", data.msgtype, data.msgid);
+    console.log("[GameAPI] Sent to bridge:", data.msgtype);
   } else {
     const isLocal = typeof window !== 'undefined' &&
       (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
@@ -230,21 +347,14 @@ export async function saveMinigameResult(
   if (lifelines.askAI < 1) lifelinesUsed.push('askAI');
   if (lifelines.changeQuestion < 1) lifelinesUsed.push('changeQuestion');
 
-  // User identifier for 'user' field
-  const userIdentifier = userInfo.email || userInfo.name || 'guest';
-
   const resultData: MinigameMessage = {
-    msgid: generateUUID(),
     msgtype: 'RESULT',
-    key: '',
     tsms: Date.now(),
-    user: userIdentifier,
     payload: {
-
-      username: userInfo.name || 'guest',
+      // Game info (engine sẽ tự thêm clientid và gameKey)
       appid: 'minigame-ai-la-trieu-phu',
-      clientid: getClientId(),
 
+      // Rewards
       coin: coinReward,
       xp: xp,
       bonus_coin: Math.round(coinReward * (0.2 + (levelReached / 15) * 0.4)),  // 20% → 60% theo level
@@ -280,19 +390,12 @@ export async function savePurchaseLog(
   const state = useGameStore.getState();
   const userInfo = state.userInfo;
 
-  // User identifier for 'user' field
-  const userIdentifier = userInfo.email || userInfo.name || 'guest';
-
   const purchaseData: MinigameMessage = {
-    msgid: generateUUID(),
     msgtype: 'PURCHASE',
-    key: '',
     tsms: Date.now(),
-    user: userIdentifier,
     payload: {
-      username: userInfo.name || 'guest',
+      // Game info (engine sẽ tự thêm clientid và gameKey)
       appid: 'minigame-ai-la-trieu-phu',
-      clientid: getClientId(),
 
       // Required fields theo schema
       coin: 0,
