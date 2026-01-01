@@ -22,7 +22,7 @@ interface PistudyResponse {
   };
 }
 
-// Message structure interface (đơn giản hóa - engine sẽ thêm các field còn lại)
+// Message structure interface (theo game mẫu Đua Xe)
 interface MinigameMessage {
   msgtype: 'RESULT' | 'PURCHASE';
   tsms: number;
@@ -351,14 +351,16 @@ export async function saveMinigameResult(
     msgtype: 'RESULT',
     tsms: Date.now(),
     payload: {
-      // Game info (engine sẽ tự thêm clientid và gameKey)
+      // Thứ tự giống game mẫu Đua Xe
       appid: 'minigame-ai-la-trieu-phu',
-
-      // Rewards
       coin: coinReward,
       xp: xp,
       bonus_coin: Math.round(coinReward * (0.2 + (levelReached / 15) * 0.4)),  // 20% → 60% theo level
       bonus_xp: 0,
+      username: userInfo.name || 'guest',
+      email: userInfo.email || '',
+      gameKey: 'minigame-ai-la-trieu-phu',
+      clientid: encodeURIComponent(getCourseId()),
 
       // Game result
       score: levelReached,
@@ -394,14 +396,16 @@ export async function savePurchaseLog(
     msgtype: 'PURCHASE',
     tsms: Date.now(),
     payload: {
-      // Game info (engine sẽ tự thêm clientid và gameKey)
+      // Thứ tự giống game mẫu Đua Xe
       appid: 'minigame-ai-la-trieu-phu',
-
-      // Required fields theo schema
       coin: 0,
       xp: 0,
       bonus_coin: -price,  // Delta âm: trừ tiền mua đồ
       bonus_xp: 0,
+      username: userInfo.name || 'guest',
+      email: userInfo.email || '',
+      gameKey: 'minigame-ai-la-trieu-phu',
+      clientid: encodeURIComponent(getCourseId()),
       score: 0,
 
       // Purchase specific
