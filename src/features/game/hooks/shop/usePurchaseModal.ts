@@ -4,10 +4,10 @@ import { useGameStore } from '../../store/useGameStore';
 import { playSound } from '../../utils/audio-manager';
 import { ShopItem } from '../../types/entities';
 
-export const usePurchase = () => {
+export const usePurchaseModal = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [itemToBuy, setItemToBuy] = useState<ShopItem | null>(null);
-  
+
   const buyItem = useGameStore(s => s.buyItem);
   const balance = useGameStore(s => s.userInfo.balance);
 
@@ -25,7 +25,7 @@ export const usePurchase = () => {
     if (!itemToBuy) return;
 
     const result = buyItem(itemToBuy.id);
-    
+
     if (result.success) {
       playSound('win'); // Thành công
       setIsOpen(false);

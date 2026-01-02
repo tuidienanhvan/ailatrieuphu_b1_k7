@@ -357,7 +357,8 @@ export async function saveMinigameResult(
       xp: xp,
       bonus_coin: Math.round(coinReward * (0.2 + (levelReached / 15) * 0.4)),  // 20% → 60% theo level
       bonus_xp: 0,
-      username: userInfo.name || 'guest',
+      userId: userInfo.userId || null,  // thêm userId giống Đua Xe
+      username: userInfo.username || userInfo.name || 'guest',
       email: userInfo.email || '',
       gameKey: 'minigame-ai-la-trieu-phu',
       clientid: encodeURIComponent(getCourseId()),
@@ -398,11 +399,12 @@ export async function savePurchaseLog(
     payload: {
       // Thứ tự giống game mẫu Đua Xe
       appid: 'minigame-ai-la-trieu-phu',
-      coin: 0,
+      coin: -price,  // Delta âm: trừ tiền mua đồ
       xp: 0,
-      bonus_coin: -price,  // Delta âm: trừ tiền mua đồ
+      bonus_coin: 0,
       bonus_xp: 0,
-      username: userInfo.name || 'guest',
+      userId: userInfo.userId || null,  // thêm userId giống Đua Xe
+      username: userInfo.username || userInfo.name || 'guest',
       email: userInfo.email || '',
       gameKey: 'minigame-ai-la-trieu-phu',
       clientid: encodeURIComponent(getCourseId()),

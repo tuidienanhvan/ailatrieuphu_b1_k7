@@ -2,8 +2,8 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { useGameStore } from '../../store/useGameStore';
 import { playSound } from '../../utils/audio-manager';
-import { useGameAudio } from './useGameAudio';
-import { useGameTimer } from './useGameTimer';
+import { useGameAudio } from '../shared/useGameAudio';
+import { useGameTimer } from '../shared/useGameTimer';
 import { useAnswers } from './useAnswers';
 import { useLifelines } from './useLifelines';
 import { useGameModals } from './useGameModals';

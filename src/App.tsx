@@ -139,16 +139,18 @@ export const App: React.FC = () => {
 
         // Cập nhật đầy đủ thông tin user từ Parent Window (Engine v3.15.0)
         setUserInfo({
-          name: e.data.userName || e.data.username, // Hỗ trợ cả 2 naming convention
-          email: e.data.userEmail || e.data.email || '', // Engine gửi userEmail
+          name: e.data.name || e.data.userName || e.data.username || 'Khách', // Engine gửi "name"
+          username: e.data.username || '', // preferred_username từ JWT
+          email: e.data.email || e.data.userEmail || '', // Engine gửi "email"
           userId: e.data.userId || null,
           balance: newBalance, // Lấy giá trị LỚN HƠN
           stats: e.data.stats || { playCount: 0, bestScore: 0 },
           serverHistory: e.data.history || []  // History từ server (RESULT + PURCHASE)
         });
         console.log('[App] Received MINIGAME_DATA:', {
-          userName: e.data.userName,
-          userEmail: e.data.userEmail,
+          name: e.data.name,
+          username: e.data.username,
+          email: e.data.email,
           userId: e.data.userId,
           balance: newBalance,
           incomingBalance: incomingBalance,

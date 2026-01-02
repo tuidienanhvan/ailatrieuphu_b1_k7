@@ -65,7 +65,8 @@ export interface ServerHistoryRecord {
 export interface UserInfo {
   userId?: number; // ID định danh từ hệ thống cha
   email?: string;  // Email người chơi
-  name: string;
+  username?: string; // preferred_username từ JWT
+  name: string;    // Họ tên đầy đủ
   balance: number; // Tiền trong game
   inventory: string[]; // Danh sách ID vật phẩm đã sở hữu
   equippedSkin: string; // Skin đang dùng

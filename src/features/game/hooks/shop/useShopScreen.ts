@@ -6,7 +6,7 @@ import { SHOP_ITEMS } from '../../data/shop-data';
 import { playSound } from '../../utils/audio-manager';
 import { ShopItem } from '../../types/entities';
 
-export const useShop = () => {
+export const useShopScreen = () => {
   const [activeTab, setActiveTab] = useState<'all' | 'skin' | 'lifeline'>('lifeline');
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
 
@@ -19,8 +19,8 @@ export const useShop = () => {
   }, [activeTab]);
 
   const handleSelectTab = useCallback((tab: 'all' | 'skin' | 'lifeline') => {
-      setActiveTab(tab);
-      playSound('select');
+    setActiveTab(tab);
+    playSound('select');
   }, []);
 
   const handleSelectItem = useCallback((item: ShopItem) => {
@@ -29,8 +29,8 @@ export const useShop = () => {
   }, []);
 
   const handleBack = useCallback(() => {
-      setGameState(GameState.WELCOME);
-      playSound('select'); // Hoặc âm thanh 'cancel' tùy ý
+    setGameState(GameState.WELCOME);
+    playSound('select'); // Hoặc âm thanh 'cancel' tùy ý
   }, [setGameState]);
 
   return {

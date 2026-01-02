@@ -1,0 +1,646 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# PISTUDY MINIGAME API - OpenAPI 3.0 Specification
+# ═══════════════════════════════════════════════════════════════════════════════
+# Version: 1.0.0
+# Author: Frontend Team
+# Date: 2026-01-02
+# ═══════════════════════════════════════════════════════════════════════════════
+
+openapi: 3.0.3
+info:
+  title: PiStudy Minigame Logs API
+  description: |
+    API để lưu kết quả chơi game và mua item trong các minigame của PiStudy.
+    
+    ## Authentication
+    Sử dụng Cookie-based authentication với JWT token.
+    
+    ## Message Types
+    - `RESULT`: Lưu kết quả khi kết thúc game
+    - `PURCHASE`: Lưu giao dịch mua item trong shop
+    
+  version: 1.0.0
+  contact:
+    name: PiStudy Dev Team
+    email: dev@pistudy.vn
+
+servers:
+  - url: https://pistudy.vn/api/minigames
+    description: Production server
+  - url: https://apps.pistudy.vn/api/minigames
+    description: Apps server
+  - url: http://localhost:8000/api/minigames
+    description: Development server
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PATHS
+# ═══════════════════════════════════════════════════════════════════════════════
+paths:
+  /logs/:
+    post:
+      summary: Save game result or purchase log
+      description: |
+        Gửi kết quả game hoặc giao dịch mua item lên server.
+        
+        **Logic xử lý RESULT:**
+        - Backend lưu kỷ lục cao nhất (Max Score) cho mỗi game
+        - `total_coin = SUM(MAX(coin + bonus_coin) của mỗi game)`
+        
+        **Logic xử lý PURCHASE:**
+        - Trừ tiền từ balance của user
+        - Cộng item vào inventory
+        
+      operationId: saveLog
+      tags:
+        - Logs
+      
+      security:
+        - cookieAuth: []
+      
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/ResultMessage'
+                - $ref: '#/components/schemas/PurchaseMessage'
+            examples:
+              result_victory:
+                summary: Chiến thắng game
+                value:
+                  msgtype: "RESULT"
+                  tsms: 1767290916605
+                  payload:
+                    appid: "minigame-ai-la-trieu-phu"
+                    coin: 10000
+                    xp: 15
+                    bonus_coin: 6000
+                    bonus_xp: 0
+                    userId: 13
+                    username: "913_tuanhvan2018"
+                    email: "913.tuanhvan2018@gmail.com"
+                    gameKey: "minigame-ai-la-trieu-phu"
+                    clientid: "course-v1%3APiStudy%2BTOAN7%2B2025_T9"
+                    score: 15
+                    result: "victory"
+                    level: 15
+                    wrong_answer_level: null
+                    lifelines_used: ["fiftyFifty", "phone"]
+              
+              result_gameover:
+                summary: Thua game
+                value:
+                  msgtype: "RESULT"
+                  tsms: 1767290916605
+                  payload:
+                    appid: "minigame-ai-la-trieu-phu"
+                    coin: 667
+                    xp: 1
+                    bonus_coin: 151
+                    bonus_xp: 0
+                    userId: 13
+                    username: "913_tuanhvan2018"
+                    email: "913.tuanhvan2018@gmail.com"
+                    gameKey: "minigame-ai-la-trieu-phu"
+                    clientid: "course-v1%3APiStudy%2BTOAN7%2B2025_T9"
+                    score: 1
+                    result: "gameover"
+                    level: 1
+                    wrong_answer_level: 2
+                    lifelines_used: []
+              
+              result_stop:
+                summary: Dừng game
+                value:
+                  msgtype: "RESULT"
+                  tsms: 1767290916605
+                  payload:
+                    appid: "minigame-ai-la-trieu-phu"
+                    coin: 3333
+                    xp: 5
+                    bonus_coin: 1000
+                    bonus_xp: 0
+                    userId: 13
+                    username: "913_tuanhvan2018"
+                    email: "913.tuanhvan2018@gmail.com"
+                    gameKey: "minigame-ai-la-trieu-phu"
+                    clientid: "course-v1%3APiStudy%2BTOAN7%2B2025_T9"
+                    score: 5
+                    result: "stop"
+                    level: 5
+                    wrong_answer_level: null
+                    lifelines_used: ["audience"]
+              
+              purchase_lifeline:
+                summary: Mua lifeline
+                value:
+                  msgtype: "PURCHASE"
+                  tsms: 1767290916605
+                  payload:
+                    appid: "minigame-ai-la-trieu-phu"
+                    coin: -8000
+                    xp: 0
+                    bonus_coin: 0
+                    bonus_xp: 0
+                    userId: 13
+                    username: "913_tuanhvan2018"
+                    email: "913.tuanhvan2018@gmail.com"
+                    gameKey: "minigame-ai-la-trieu-phu"
+                    clientid: "course-v1%3APiStudy%2BTOAN7%2B2025_T9"
+                    score: 0
+                    item_id: "extra_change_question"
+                    item_name: "Đổi Câu Hỏi"
+                    item_type: "lifeline"
+      
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+              examples:
+                result_saved:
+                  summary: Kết quả đã lưu
+                  value:
+                    status: "success"
+                    message: "Result saved"
+                    data:
+                      record_updated: true
+                      new_best_coin: 10000
+                      user_total_coins: 50000
+                
+                purchase_success:
+                  summary: Mua thành công
+                  value:
+                    status: "success"
+                    message: "Purchase completed"
+                    data:
+                      item_id: "extra_change_question"
+                      balance_after: 42000
+        
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                missing_field:
+                  summary: Thiếu field bắt buộc
+                  value:
+                    error: "Invalid payload"
+                    message: "Missing required field: coin"
+                
+                invalid_msgtype:
+                  summary: msgtype không hợp lệ
+                  value:
+                    error: "Invalid msgtype"
+                    message: "msgtype must be 'RESULT' or 'PURCHASE'"
+                
+                insufficient_balance:
+                  summary: Không đủ tiền
+                  value:
+                    error: "Insufficient balance"
+                    message: "User balance (5000) is less than item price (8000)"
+        
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                missing_jwt:
+                  summary: Thiếu JWT token
+                  value:
+                    error: "Unauthorized"
+                    message: "Missing or invalid JWT token"
+                
+                expired_jwt:
+                  summary: JWT hết hạn
+                  value:
+                    error: "Unauthorized"
+                    message: "JWT token expired"
+        
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# COMPONENTS
+# ═══════════════════════════════════════════════════════════════════════════════
+components:
+  
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Security Schemes
+  # ─────────────────────────────────────────────────────────────────────────────
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: edx-jwt-cookie-header-payload
+      description: |
+        JWT token từ Open edX LMS.
+        
+        **Decode JWT để lấy thông tin user:**
+        ```python
+        import jwt
+        payload = jwt.decode(token, options={"verify_signature": False})
+        # payload = {
+        #   "user_id": 13,
+        #   "preferred_username": "913_tuanhvan2018",
+        #   "email": "913.tuanhvan2018@gmail.com",
+        #   "name": "Anh Văn Từ",
+        #   ...
+        # }
+        ```
+    
+    csrfToken:
+      type: apiKey
+      in: header
+      name: X-CSRFToken
+      description: CSRF token từ cookie `csrftoken`
+  
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Schemas
+  # ─────────────────────────────────────────────────────────────────────────────
+  schemas:
+    
+    # ═══════════════════════════════════════════════════════════════════════════
+    # RESULT MESSAGE
+    # ═══════════════════════════════════════════════════════════════════════════
+    ResultMessage:
+      type: object
+      required:
+        - msgtype
+        - tsms
+        - payload
+      properties:
+        msgtype:
+          type: string
+          enum: [RESULT]
+          description: Loại message
+          example: "RESULT"
+        
+        tsms:
+          type: integer
+          format: int64
+          description: Timestamp (milliseconds) khi message được tạo
+          example: 1767290916605
+        
+        payload:
+          $ref: '#/components/schemas/ResultPayload'
+    
+    ResultPayload:
+      type: object
+      required:
+        - appid
+        - coin
+        - xp
+        - bonus_coin
+        - bonus_xp
+        - username
+        - email
+        - gameKey
+        - clientid
+        - score
+        - result
+        - level
+      properties:
+        
+        # ─────────────────────────────────────────────────────────────────────
+        # Identification Fields
+        # ─────────────────────────────────────────────────────────────────────
+        appid:
+          type: string
+          description: ID định danh của minigame
+          example: "minigame-ai-la-trieu-phu"
+        
+        gameKey:
+          type: string
+          description: Key định danh game (thường giống appid)
+          example: "minigame-ai-la-trieu-phu"
+        
+        clientid:
+          type: string
+          description: |
+            Course ID (URL-encoded).
+            
+            **Decode:** `urllib.parse.unquote(clientid)`
+            
+            **Result:** `course-v1:PiStudy+TOAN7+2025_T9`
+          example: "course-v1%3APiStudy%2BTOAN7%2B2025_T9"
+        
+        username:
+          type: string
+          description: Username của user (preferred_username từ JWT cookie)
+          example: "913_tuanhvan2018"
+        
+        userId:
+          type: integer
+          nullable: true
+          description: User ID từ JWT cookie (user_id)
+          example: 13
+        
+        email:
+          type: string
+          format: email
+          description: Email của user (từ JWT cookie)
+          example: "913.tuanhvan2018@gmail.com"
+        
+        # ─────────────────────────────────────────────────────────────────────
+        # Reward Fields
+        # ─────────────────────────────────────────────────────────────────────
+        coin:
+          type: integer
+          minimum: 0
+          maximum: 10000
+          description: |
+            **Coin chính** - Phần thưởng theo level đạt được.
+            
+            **Công thức:** `Math.round((level / 15) * 10000)`
+            
+            | Level | Coin |
+            |-------|------|
+            | 1 | 667 |
+            | 5 | 3,333 |
+            | 10 | 6,667 |
+            | 15 | 10,000 |
+          example: 667
+        
+        xp:
+          type: integer
+          minimum: 0
+          maximum: 100
+          description: |
+            **XP chính** - Kinh nghiệm theo level.
+            
+            **Công thức:** `level` (1-15)
+          example: 7
+        
+        bonus_coin:
+          type: integer
+          minimum: 0
+          maximum: 6000
+          description: |
+            **Bonus Coin** - Phần thưởng phụ (20%-60% của coin theo level).
+            
+            **Công thức:** `Math.round(coin * (0.2 + (level / 15) * 0.4))`
+            
+            | Level | Bonus % | Bonus Coin |
+            |-------|---------|------------|
+            | 1 | ~23% | ~151 |
+            | 5 | ~33% | ~1,111 |
+            | 15 | 60% | 6,000 |
+          example: 151
+        
+        bonus_xp:
+          type: integer
+          minimum: 0
+          description: Bonus XP (hiện tại luôn = 0)
+          example: 0
+        
+        # ─────────────────────────────────────────────────────────────────────
+        # Game Result Fields
+        # ─────────────────────────────────────────────────────────────────────
+        score:
+          type: integer
+          minimum: 0
+          maximum: 15
+          description: Level/Điểm số đạt được (dùng để so sánh kỷ lục)
+          example: 1
+        
+        result:
+          type: string
+          enum: [victory, gameover, stop]
+          description: |
+            Kết quả ván chơi:
+            - `victory`: Trả lời đúng 15 câu
+            - `gameover`: Trả lời sai
+            - `stop`: Dừng game (lấy tiền an toàn)
+          example: "stop"
+        
+        level:
+          type: integer
+          minimum: 1
+          maximum: 15
+          description: Câu hỏi cuối cùng đạt được (1-indexed)
+          example: 1
+        
+        wrong_answer_level:
+          type: integer
+          nullable: true
+          minimum: 1
+          maximum: 15
+          description: Câu hỏi trả lời sai (null nếu không sai)
+          example: null
+        
+        lifelines_used:
+          type: array
+          items:
+            type: string
+            enum: [fiftyFifty, phone, audience, askAI, changeQuestion]
+          description: |
+            Danh sách cứu trợ đã dùng:
+            - `fiftyFifty`: 50:50
+            - `phone`: Gọi điện người thân
+            - `audience`: Hỏi ý kiến khán giả
+            - `askAI`: Hỏi AI (bonus)
+            - `changeQuestion`: Đổi câu hỏi (bonus)
+          example: []
+    
+    # ═══════════════════════════════════════════════════════════════════════════
+    # PURCHASE MESSAGE
+    # ═══════════════════════════════════════════════════════════════════════════
+    PurchaseMessage:
+      type: object
+      required:
+        - msgtype
+        - tsms
+        - payload
+      properties:
+        msgtype:
+          type: string
+          enum: [PURCHASE]
+          description: Loại message
+          example: "PURCHASE"
+        
+        tsms:
+          type: integer
+          format: int64
+          description: Timestamp (milliseconds) khi message được tạo
+          example: 1767290916605
+        
+        payload:
+          $ref: '#/components/schemas/PurchasePayload'
+    
+    PurchasePayload:
+      type: object
+      required:
+        - appid
+        - coin
+        - xp
+        - bonus_coin
+        - bonus_xp
+        - username
+        - email
+        - gameKey
+        - clientid
+        - score
+        - item_id
+        - item_name
+        - item_type
+      properties:
+        
+        # ─────────────────────────────────────────────────────────────────────
+        # Identification Fields (giống ResultPayload)
+        # ─────────────────────────────────────────────────────────────────────
+        appid:
+          type: string
+          example: "minigame-ai-la-trieu-phu"
+        
+        gameKey:
+          type: string
+          example: "minigame-ai-la-trieu-phu"
+        
+        clientid:
+          type: string
+          example: "course-v1%3APiStudy%2BTOAN7%2B2025_T9"
+        
+        username:
+          type: string
+          example: "913_tuanhvan2018"
+        
+        userId:
+          type: integer
+          nullable: true
+          description: User ID từ JWT cookie
+          example: 13
+        
+        email:
+          type: string
+          format: email
+          example: "913.tuanhvan2018@gmail.com"
+        
+        # ─────────────────────────────────────────────────────────────────────
+        # Transaction Fields
+        # ─────────────────────────────────────────────────────────────────────
+        coin:
+          type: integer
+          description: |
+            **Số tiền trừ** (số âm = trừ tiền).
+            
+            **Công thức:** `-price`
+            
+            Ví dụ: Mua item giá 8000 → `coin = -8000`
+          example: -8000
+        
+        xp:
+          type: integer
+          description: Luôn = 0 cho PURCHASE
+          example: 0
+        
+        bonus_coin:
+          type: integer
+          description: Luôn = 0 cho PURCHASE
+          example: 0
+        
+        bonus_xp:
+          type: integer
+          description: Luôn = 0 cho PURCHASE
+          example: 0
+        
+        score:
+          type: integer
+          description: Luôn = 0 cho PURCHASE
+          example: 0
+        
+        # ─────────────────────────────────────────────────────────────────────
+        # Item Fields
+        # ─────────────────────────────────────────────────────────────────────
+        item_id:
+          type: string
+          description: ID của item được mua
+          example: "extra_change_question"
+        
+        item_name:
+          type: string
+          description: Tên hiển thị của item
+          example: "Đổi Câu Hỏi"
+        
+        item_type:
+          type: string
+          enum: [lifeline, skin]
+          description: |
+            Loại item:
+            - `lifeline`: Cứu trợ bổ sung
+            - `skin`: Giao diện/Avatar
+          example: "lifeline"
+    
+    # ═══════════════════════════════════════════════════════════════════════════
+    # RESPONSES
+    # ═══════════════════════════════════════════════════════════════════════════
+    SuccessResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [success]
+          example: "success"
+        
+        message:
+          type: string
+          example: "Result saved"
+        
+        data:
+          type: object
+          properties:
+            record_updated:
+              type: boolean
+              description: True nếu kỷ lục được cập nhật
+              example: true
+            
+            new_best_coin:
+              type: integer
+              description: Kỷ lục coin mới (nếu cập nhật)
+              example: 10000
+            
+            user_total_coins:
+              type: integer
+              description: Tổng coin của user sau khi cập nhật
+              example: 50000
+            
+            item_id:
+              type: string
+              description: ID item đã mua (for PURCHASE)
+              example: "extra_change_question"
+            
+            balance_after:
+              type: integer
+              description: Balance sau khi mua (for PURCHASE)
+              example: 42000
+    
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Mã lỗi
+          example: "Invalid payload"
+        
+        message:
+          type: string
+          description: Chi tiết lỗi
+          example: "Missing required field: coin"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# TAGS
+# ═══════════════════════════════════════════════════════════════════════════════
+tags:
+  - name: Logs
+    description: API lưu kết quả game và giao dịch mua item
