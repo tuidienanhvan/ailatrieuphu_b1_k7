@@ -12,6 +12,8 @@ interface State {
 }
 
 export class ErrorBoundary extends React.Component<Props, State> {
+
+
   public state: State;
 
   constructor(props: Props) {
@@ -53,6 +55,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
       );
     }
 
+    // @ts-ignore
     return this.props.children;
   }
 }

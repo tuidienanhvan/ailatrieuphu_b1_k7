@@ -1,26 +1,24 @@
 
-import React, { useEffect, useCallback, Suspense, lazy, useRef } from 'react';
+import React, { useEffect, useCallback, Suspense, lazy, useRef, useMemo } from 'react';
 import { GameState } from './features/game/types/common';
 import { useGameStore } from './features/game/store/useGameStore';
 import { useFullscreen } from './common/hooks/useFullscreen';
 import { useScaler } from './common/hooks/useScaler';
-import { GameHeader } from './features/game/components/layout/GameHeader';
-import { SidebarPrizes } from './features/game/components/play/SidebarPrizes';
-import { PRIZES } from './features/game/data/game-constants';
+import { GameHeader } from './features/game/themes/premier/components/layout/GameHeader';
+import { getTierIdByLevel } from './features/game/data/level-themes';
 import { playSound, audioManager } from './features/game/utils/audio-manager';
 import { ErrorBoundary } from './common/components/ErrorBoundary';
 import { LoadingScreen } from './common/components/LoadingScreen';
 
-// Lazy load components with preload for critical screens
-const WelcomeScreen = lazy(() => import('./pages/WelcomeScreen').then(module => ({ default: module.WelcomeScreen })));
-const PlayScreenPromise = import('./pages/PlayScreen'); // Preload
-const PlayScreen = lazy(() => PlayScreenPromise.then(module => ({ default: module.PlayScreen })));
-const ResultScreenPromise = import('./pages/ResultScreen'); // Preload
-const ResultScreen = lazy(() => ResultScreenPromise.then(module => ({ default: module.ResultScreen })));
-const ShopScreenPromise = import('./pages/ShopScreen'); // Preload
-const ShopScreen = lazy(() => ShopScreenPromise.then(module => ({ default: module.ShopScreen })));
-const HistoryScreenPromise = import('./pages/HistoryScreen'); // Preload
-const HistoryScreen = lazy(() => HistoryScreenPromise.then(module => ({ default: module.HistoryScreen })));
+// Theme System - Dynamic import based on tier
+import { getTheme } from './features/game/themes/registry';
+
+// Fallback: Lazy load screens for initial load (Premier theme)
+const WelcomeScreen = lazy(() => import('./features/game/themes/premier/screens/WelcomeScreen').then(m => ({ default: m.WelcomeScreen })));
+const PlayScreen = lazy(() => import('./features/game/themes/premier/screens/PlayScreen').then(m => ({ default: m.PlayScreen })));
+const ResultScreen = lazy(() => import('./features/game/themes/premier/screens/ResultScreen').then(m => ({ default: m.ResultScreen })));
+const ShopScreen = lazy(() => import('./features/game/themes/premier/screens/ShopScreen').then(m => ({ default: m.ShopScreen })));
+const HistoryScreen = lazy(() => import('./features/game/themes/premier/screens/HistoryScreen').then(m => ({ default: m.HistoryScreen })));
 
 export const App: React.FC = () => {
   // Refs for the Scale Engine
@@ -43,11 +41,27 @@ export const App: React.FC = () => {
   const fetchAndStartGame = useGameStore(s => s.fetchAndStartGame);
   const setGameState = useGameStore(s => s.setGameState);
   const setUserInfo = useGameStore(s => s.setUserInfo);
+  const startTier = useGameStore(s => s.startTier);
+  const nextLevel = useGameStore(s => s.nextLevel);
 
   const handleStartGame = useCallback(() => {
     playSound('start');
     fetchAndStartGame();
   }, [fetchAndStartGame]);
+
+  // Handle continue to next tier
+  const handleContinueTier = useCallback(() => {
+    const currentLevel = useGameStore.getState().currentLevel;
+    const nextTier = getTierIdByLevel(currentLevel + 1) as 1 | 2 | 3;
+
+    // Move to next level first
+    nextLevel();
+
+    // Then start the new tier (resets lifelines)
+    startTier(nextTier);
+
+    playSound('start');
+  }, [nextLevel, startTier]);
 
   // Handle Toggle Shop Logic
   const handleToggleShop = useCallback(() => {
@@ -224,11 +238,14 @@ export const App: React.FC = () => {
                   <HistoryScreen />
                 )}
 
-                {(gameState === GameState.GAME_OVER || gameState === GameState.VICTORY) && (
+                {(gameState === GameState.GAME_OVER || gameState === GameState.VICTORY || gameState === GameState.TIER_COMPLETE) && (
                   <ResultScreen
                     isVictory={gameState === GameState.VICTORY}
+                    isTierComplete={gameState === GameState.TIER_COMPLETE}
+                    tierNumber={getTierIdByLevel(currentQIndex)}
                     prize={finalPrize}
                     onReset={() => setGameState(GameState.WELCOME)}
+                    onContinue={handleContinueTier}
                   />
                 )}
               </div>

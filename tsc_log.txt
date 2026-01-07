@@ -1,0 +1,6 @@
+src/common/components/ErrorBoundary.tsx(56,17): error TS2339: Property 'props' does not exist on type 'ErrorBoundary'.
+src/features/game/themes/premier/index.ts(35,28): error TS2307: Cannot find module './components/modals/PhoneModal' or its corresponding type declarations.
+src/features/game/themes/premier/index.ts(36,31): error TS2307: Cannot find module './components/modals/AudienceModal' or its corresponding type declarations.
+src/features/game/themes/premier/index.ts(37,32): error TS2307: Cannot find module './components/modals/AIConsultModal' or its corresponding type declarations.
+src/features/game/themes/premier/index.ts(38,30): error TS2307: Cannot find module './components/modals/MessageModal' or its corresponding type declarations.
+src/features/game/themes/premier/index.ts(39,31): error TS2307: Cannot find module './components/modals/StopGameModal' or its corresponding type declarations.

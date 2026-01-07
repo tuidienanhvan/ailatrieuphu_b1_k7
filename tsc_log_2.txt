@@ -1,0 +1,1 @@
+src/common/components/ErrorBoundary.tsx(56,17): error TS2339: Property 'props' does not exist on type 'ErrorBoundary'.

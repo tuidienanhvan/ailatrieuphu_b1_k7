@@ -7,7 +7,8 @@ import { useGameTimer } from '../shared/useGameTimer';
 import { useAnswers } from './useAnswers';
 import { useLifelines } from './useLifelines';
 import { useGameModals } from './useGameModals';
-import { TIMER_DURATION } from '../../data/game-constants';
+import { TOTAL_LEVELS } from '../../data/game-constants';
+import { getTierByLevel } from '../../data/level-themes';
 import { saveMinigameResult } from '../../data/game-api';
 import { calculateFallingPrizeIndex, getPrizeAmount } from '../../../../common/utils/math-helpers';
 import { GameState } from '../../types/common';
@@ -39,8 +40,12 @@ export const usePlayScreen = () => {
     }
   }, [currentLevel, gameState, triggerEventCheck]);
 
-  // Timer logic clean
-  const { timer, startTimer, stopTimer, isTimerRunning } = useGameTimer(TIMER_DURATION, gameState, useGameStore(s => s.activeModal));
+  // Get current tier theme for timer duration
+  const currentTier = getTierByLevel(currentLevel);
+  const timerDuration = currentTier.timerDuration;
+
+  // Timer logic - uses tier-based duration
+  const { timer, startTimer, stopTimer, isTimerRunning } = useGameTimer(timerDuration, gameState, useGameStore(s => s.activeModal));
 
   const handleGameOver = useCallback((reason: 'wrong' | 'timeout' | 'stop' | 'victory') => {
     const currentQIndex = useGameStore.getState().currentLevel;
@@ -53,13 +58,13 @@ export const usePlayScreen = () => {
     const playDuration = Math.round((Date.now() - gameStartTime.current) / 1000);
 
     if (reason === 'victory') {
-      // VICTORY - passed all 15 questions
-      prize = getPrizeAmount(14); // PRIZES[14] = level 15 prize
-      levelToSave = 15;
+      // VICTORY - passed all 45 questions
+      prize = getPrizeAmount(TOTAL_LEVELS - 1); // PRIZES[44] = level 45 prize = 1 tỷ
+      levelToSave = TOTAL_LEVELS;
       gameResult = 'victory';
       wrongAnswerLevel = null;
 
-      logEvent('GAME_END', { result: 'VICTORY', finalLevel: 15, prize: prize });
+      logEvent('GAME_END', { result: 'VICTORY', finalLevel: TOTAL_LEVELS, prize: prize });
       setGameState(GameState.VICTORY);
       playSound('win');
     } else if (reason === 'stop') {
@@ -123,7 +128,7 @@ export const usePlayScreen = () => {
     handleGameOver('stop');
   }, [closeModal, handleGameOver]);
 
-  useGameAudio(timer, TIMER_DURATION, isTimerRunning);
+  useGameAudio(timer, timerDuration, isTimerRunning);
 
   useEffect(() => {
     if (timer === 0 && gameState === GameState.PLAYING) {
@@ -143,9 +148,9 @@ export const usePlayScreen = () => {
   useEffect(() => {
     setHiddenAnswers(prev => prev.length > 0 ? [] : prev);
     if (gameState === GameState.PLAYING) {
-      startTimer(TIMER_DURATION);
+      startTimer(timerDuration);
     }
-  }, [currentLevel, gameState, setHiddenAnswers, startTimer]);
+  }, [currentLevel, gameState, setHiddenAnswers, startTimer, timerDuration]);
 
   return {
     timer,

@@ -6,6 +6,7 @@ export enum GameState {
   PLAYING,
   GAME_OVER,
   VICTORY,
+  TIER_COMPLETE,  // Hoàn thành tier, hiển thị ResultScreen với "Chơi tiếp"
   SHOP,
   HISTORY // New State
 }
@@ -24,7 +25,7 @@ export interface VisualState {
   // Hiệu ứng AI
   isAiThinking: boolean;
   aiDisplayText: string; // Text chạy chữ từng ký tự
-  
+
   // Hiệu ứng Khán giả
   audienceBars: number[]; // Chiều cao cột (0 -> 100)
 }
@@ -41,12 +42,13 @@ export interface ModalData {
 }
 
 // --- LOGGING SYSTEM ---
-export type LogActionType = 
-  | 'GAME_START' 
-  | 'ANSWER' 
-  | 'USE_LIFELINE' 
-  | 'SHOP_PURCHASE' 
-  | 'GAME_END';
+export type LogActionType =
+  | 'GAME_START'
+  | 'ANSWER'
+  | 'USE_LIFELINE'
+  | 'SHOP_PURCHASE'
+  | 'GAME_END'
+  | 'TIER_START';  // Bắt đầu tier mới
 
 export interface GameLogEvent {
   timestamp: number;
