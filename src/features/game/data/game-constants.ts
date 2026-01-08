@@ -11,78 +11,78 @@ export const PHONE_HELPERS: PhoneHelper[] = [
 
 export const QUESTIONS: Question[] = [
   // ═══════════════════════════════════════════════════════════════════
-  // CHƯƠNG 1: NHÂN ĐA THỨC
+  // CHƯƠNG 1: SỐ TỰ NHIÊN - TẬP HỢP
   // ═══════════════════════════════════════════════════════════════════
-  { question: "Kết quả của phép nhân $3x(2x - 5)$ là:", answers: ["$6x^2 - 15x$", "$6x^2 - 15$", "$6x - 15x$", "$5x^2 - 15x$"], correct: 0 },
-  { question: "Thực hiện phép tính: $-2x^2(3x - 4y + 1)$", answers: ["$-6x^3 + 8x^2y - 2x^2$", "$-6x^3 - 8x^2y - 2x^2$", "$6x^3 + 8x^2y - 2x^2$", "$-6x^3 + 8x^2y + 2x^2$"], correct: 0 },
-  { question: "Khai triển $(x + 3)(x - 2)$ được:", answers: ["$x^2 + x - 6$", "$x^2 - x - 6$", "$x^2 + 5x - 6$", "$x^2 - 5x + 6$"], correct: 0 },
-  { question: "Tích $(2x - 1)(x^2 + 3x - 2)$ có hệ số của $x^2$ là:", answers: ["$5$", "$6$", "$-5$", "$7$"], correct: 0 },
+  { question: "Tập hợp các số tự nhiên được kí hiệu là:", answers: ["$\\mathbb{N}$", "$\\mathbb{N}^*$", "$\\mathbb{Z}$", "$\\mathbb{Q}$"], correct: 0 },
+  { question: "Số nào sau đây là số nguyên tố?", answers: ["$2$", "$4$", "$6$", "$9$"], correct: 0 },
+  { question: "Kết quả của phép tính $3^2$ là:", answers: ["$9$", "$6$", "$5$", "$8$"], correct: 0 },
+  { question: "Số La Mã XIX có giá trị là:", answers: ["$19$", "$21$", "$18$", "$20$"], correct: 0 },
+  { question: "Thứ tự thực hiện phép tính đúng là:", answers: ["Lũy thừa -> Nhân/Chia -> Cộng/Trừ", "Nhân/Chia -> Lũy thừa -> Cộng/Trừ", "Cộng/Trừ -> Nhân/Chia -> Lũy thừa", "Từ trái sang phải"], correct: 0 },
+  { question: "BCNN(4, 6) là:", answers: ["$12$", "$24$", "$2$", "$4$"], correct: 0 },
+  { question: "ƯCLN(12, 18) là:", answers: ["$6$", "$3$", "$2$", "$12$"], correct: 0 },
+  { question: "Số nào chia hết cho cả 2 và 5?", answers: ["$10$", "$12$", "$15$", "$8$"], correct: 0 },
+  { question: "Phân tích 20 ra thừa số nguyên tố:", answers: ["$2^2 \\cdot 5$", "$2 \\cdot 10$", "$4 \\cdot 5$", "$20 \\cdot 1$"], correct: 0 },
+  { question: "Số nào sau đây chia hết cho 3?", answers: ["$123$", "$124$", "$125$", "$122$"], correct: 0 },
 
   // ═══════════════════════════════════════════════════════════════════
-  // CHƯƠNG 2: HẰNG ĐẲNG THỨC ĐÁNG NHỚ
+  // CHƯƠNG 2: SỐ NGUYÊN
   // ═══════════════════════════════════════════════════════════════════
-  { question: "Hằng đẳng thức $(A + B)^2$ bằng:", answers: ["$A^2 + 2AB + B^2$", "$A^2 - 2AB + B^2$", "$A^2 + B^2$", "$A^2 - B^2$"], correct: 0 },
-  { question: "Khai triển $(x - 3)^2$ được:", answers: ["$x^2 - 6x + 9$", "$x^2 + 6x + 9$", "$x^2 - 9$", "$x^2 - 6x - 9$"], correct: 0 },
-  { question: "Biểu thức $(2a + 5b)^2$ bằng:", answers: ["$4a^2 + 20ab + 25b^2$", "$4a^2 + 10ab + 25b^2$", "$2a^2 + 20ab + 5b^2$", "$4a^2 - 20ab + 25b^2$"], correct: 0 },
-  { question: "Áp dụng hằng đẳng thức, $x^2 - 49$ bằng:", answers: ["$(x-7)(x+7)$", "$(x-7)^2$", "$(x+7)^2$", "$(x-49)(x+1)$"], correct: 0 },
-  { question: "Giá trị của $99^2$ tính nhanh bằng $(100-1)^2$ là:", answers: ["$9801$", "$9901$", "$9899$", "$9800$"], correct: 0 },
-  { question: "Khai triển $(x + 2)^3$ được:", answers: ["$x^3 + 6x^2 + 12x + 8$", "$x^3 + 4x^2 + 8x + 8$", "$x^3 + 6x^2 + 6x + 8$", "$x^3 + 2x^2 + 4x + 8$"], correct: 0 },
-  { question: "Hằng đẳng thức $A^3 - B^3$ bằng:", answers: ["$(A-B)(A^2+AB+B^2)$", "$(A-B)(A^2-AB+B^2)$", "$(A+B)(A^2-AB+B^2)$", "$(A-B)^3$"], correct: 0 },
-  { question: "$8x^3 + 27$ được viết thành:", answers: ["$(2x+3)(4x^2-6x+9)$", "$(2x+3)(4x^2+6x+9)$", "$(2x-3)(4x^2+6x+9)$", "$(2x+3)^3$"], correct: 0 },
+  { question: "Tập hợp các số nguyên kí hiệu là:", answers: ["$\\mathbb{Z}$", "$\\mathbb{N}$", "$\\mathbb{N}^*$", "$\\mathbb{Q}$"], correct: 0 },
+  { question: "Kết quả của $(-5) + (-3)$ là:", answers: ["$-8$", "$8$", "$2$", "$-2$"], correct: 0 },
+  { question: "Số đối của $-7$ là:", answers: ["$7$", "$-7$", "$0$", "$\\frac{1}{7}$"], correct: 0 },
+  { question: "Kết quả phép tính $10 - (-2)$ là:", answers: ["$12$", "$8$", "$-12$", "$-8$"], correct: 0 },
+  { question: "Sắp xếp các số sau theo thứ tự tăng dần: $-2; 0; -5; 3$", answers: ["$-5; -2; 0; 3$", "$-2; -5; 0; 3$", "$0; -2; -5; 3$", "$3; 0; -2; -5$"], correct: 0 },
+  { question: "Tích của hai số nguyên âm là:", answers: ["Số nguyên dương", "Số nguyên âm", "Số 0", "Số tự nhiên"], correct: 0 },
+  { question: "Kết quả của $(-3) \\cdot 4$ là:", answers: ["$-12$", "$12$", "$1$", "$-7$"], correct: 0 },
+  { question: "Giá trị tuyệt đối của $-15$ là:", answers: ["$15$", "$-15$", "$0$", "$1$"], correct: 0 },
+  { question: "Ước của $-3$ gồm:", answers: ["$\\{1; -1; 3; -3\\}$", "$\\{1; 3\\}$", "$\\{-1; -3\\}$", "$\\{3; -3\\}$"], correct: 0 },
+  { question: "Tổng của số nguyên âm lớn nhất và số nguyên dương nhỏ nhất là:", answers: ["$0$", "$2$", "$-2$", "$1$"], correct: 0 },
 
   // ═══════════════════════════════════════════════════════════════════
-  // CHƯƠNG 3: PHÂN TÍCH ĐA THỨC THÀNH NHÂN TỬ
+  // CHƯƠNG 3: HÌNH HỌC TRỰC QUAN
   // ═══════════════════════════════════════════════════════════════════
-  { question: "Phân tích $6x^2 - 9x$ thành nhân tử:", answers: ["$3x(2x - 3)$", "$3(2x^2 - 3x)$", "$6x(x - 9)$", "$9x(x - 1)$"], correct: 0 },
-  { question: "Đa thức $x^2 - 4x + 4$ phân tích thành:", answers: ["$(x-2)^2$", "$(x+2)^2$", "$(x-2)(x+2)$", "$(x-4)^2$"], correct: 0 },
-  { question: "Phân tích $x^2 - 5x + 6$ thành nhân tử:", answers: ["$(x-2)(x-3)$", "$(x+2)(x+3)$", "$(x-1)(x-6)$", "$(x+1)(x-6)$"], correct: 0 },
-  { question: "Biểu thức $x^3 - x$ phân tích thành:", answers: ["$x(x-1)(x+1)$", "$x(x^2-1)$", "$(x-1)(x^2+x)$", "$x^2(x-1)$"], correct: 0 },
-  { question: "Phân tích $2x^2 + 5x + 2$ thành nhân tử:", answers: ["$(2x+1)(x+2)$", "$(2x+2)(x+1)$", "$(x+1)(2x+2)$", "$(2x-1)(x-2)$"], correct: 0 },
+  { question: "Tam giác đều có tính chất nào?", answers: ["3 cạnh bằng nhau, 3 góc bằng nhau", "3 cạnh bằng nhau, 1 góc vuông", "2 cạnh bằng nhau", "3 góc khác nhau"], correct: 0 },
+  { question: "Hình vuông có mấy trục đối xứng?", answers: ["$4$", "$2$", "$1$", "$8$"], correct: 0 },
+  { question: "Chu vi hình chữ nhật có chiều dài 5cm, chiều rộng 3cm là:", answers: ["$16cm$", "$15cm$", "$8cm$", "$24cm$"], correct: 0 },
+  { question: "Diện tích hình thoi có hai đường chéo là 6cm và 8cm là:", answers: ["$24cm^2$", "$48cm^2$", "$14cm^2$", "$28cm^2$"], correct: 0 },
+  { question: "Hình bình hành có diện tích 20cm², chiều cao 4cm. Độ dài đáy tương ứng là:", answers: ["$5cm$", "$80cm$", "$16cm$", "$10cm$"], correct: 0 },
+  { question: "Trong hình thang cân, hai đường chéo:", answers: ["Bằng nhau", "Vuông góc", "Cắt nhau tại trung điểm", "Song song"], correct: 0 },
+  { question: "Hình lục giác đều được ghép bởi mấy tam giác đều?", answers: ["$6$", "$4$", "$5$", "$8$"], correct: 0 },
+  { question: "Công thức tính diện tích hình thang:", answers: ["$\\frac{(a+b)h}{2}$", "$(a+b)h$", "$ab$", "$\\frac{ah}{2}$"], correct: 0 },
+  { question: "Hình nào sau đây luôn có tâm đối xứng?", answers: ["Hình bình hành", "Hình thang cân", "Tam giác đều", "Hình thang vuông"], correct: 0 },
+  { question: "Chu vi hình vuông có diện tích $36cm^2$ là:", answers: ["$24cm$", "$20cm$", "$18cm$", "$12cm$"], correct: 0 },
 
   // ═══════════════════════════════════════════════════════════════════
-  // CHƯƠNG 4: PHÂN THỨC ĐẠI SỐ
+  // NÂNG CAO - TỔNG HỢP
   // ═══════════════════════════════════════════════════════════════════
-  { question: "Điều kiện xác định của phân thức $\\frac{3}{x-2}$ là:", answers: ["$x \\ne 2$", "$x \\ne 0$", "$x \\ne -2$", "$x > 2$"], correct: 0 },
-  { question: "Rút gọn phân thức $\\frac{x^2-4}{x-2}$ được:", answers: ["$x + 2$", "$x - 2$", "$x^2 - 2$", "$2x$"], correct: 0 },
-  { question: "Phân thức $\\frac{2x}{4x^2}$ rút gọn bằng:", answers: ["$\\frac{1}{2x}$", "$\\frac{1}{2}$", "$\\frac{x}{2}$", "$2x$"], correct: 0 },
-  { question: "Tính: $\\frac{x}{x+1} + \\frac{1}{x+1}$ bằng:", answers: ["$1$", "$\\frac{x+1}{x+1}$", "$\\frac{x}{1}$", "$x + 1$"], correct: 0 },
-  { question: "Tính: $\\frac{2x}{x-3} - \\frac{6}{x-3}$ bằng:", answers: ["$2$", "$\\frac{2x-6}{x-3}$", "$\\frac{2(x-3)}{x-3}$", "$2x - 6$"], correct: 0 },
-  { question: "Tính: $\\frac{x}{2} \\cdot \\frac{4}{x^2}$ bằng:", answers: ["$\\frac{2}{x}$", "$\\frac{4x}{2x^2}$", "$\\frac{2x}{x^2}$", "$\\frac{x}{2x^2}$"], correct: 0 },
-  { question: "Phép chia $\\frac{a}{b} : \\frac{c}{d}$ bằng:", answers: ["$\\frac{ad}{bc}$", "$\\frac{ac}{bd}$", "$\\frac{a}{b} \\cdot \\frac{c}{d}$", "$\\frac{bc}{ad}$"], correct: 0 },
+  { question: "Tìm $x$ biết $2^x = 16$:", answers: ["$x=4$", "$x=3$", "$x=5$", "$x=2$"], correct: 0 },
+  { question: "Số tự nhiên nhỏ nhất chia hết cho cả 3, 4, 5 là:", answers: ["$60$", "$30$", "$120$", "$15$"], correct: 0 },
+  { question: "Tổng $S = 1 + 2 + 3 + ... + 100$ bằng:", answers: ["$5050$", "$5000$", "$5100$", "$5150$"], correct: 0 },
+  { question: "ƯCLN(24, 36, 60) là:", answers: ["$12$", "$6$", "$24$", "$4$"], correct: 0 },
+  { question: "Trong phép chia có dư, số dư phải:", answers: ["Nhỏ hơn số chia", "Lớn hơn số chia", "Bằng số chia", "Lớn hơn 1"], correct: 0 },
+  { question: "Giá trị biểu thức $100 - (70 - 45)$ là:", answers: ["$75$", "$25$", "$15$", "$65$"], correct: 0 },
+  { question: "Có bao nhiêu số nguyên $x$ sao cho $|x| < 3$?", answers: ["$5$", "$4$", "$3$", "$6$"], correct: 0 },
+  { question: "Hình thoi có chu vi 20cm thì cạnh của nó là:", answers: ["$5cm$", "$4cm$", "$10cm$", "$2cm$"], correct: 0 },
+  { question: "Để số $\\overline{1x2}$ chia hết cho 3, $x$ có thể là:", answers: ["$0; 3; 6; 9$", "$1; 4; 7$", "$2; 5; 8$", "$3; 6; 9$"], correct: 0 },
+  { question: "Nếu $a$ chia hết cho $m$ và $b$ chia hết cho $m$ thì:", answers: ["$(a+b)$ chia hết cho $m$", "$(a+b)$ không chia hết cho $m$", "$a.b$ không chia hết cho $m$", "$a-b$ không chia hết cho $m$"], correct: 0 },
 
-  // ═══════════════════════════════════════════════════════════════════
-  // HÌNH HỌC: TỨ GIÁC
-  // ═══════════════════════════════════════════════════════════════════
-  { question: "Tổng các góc trong của một tứ giác bằng:", answers: ["$360°$", "$180°$", "$540°$", "$720°$"], correct: 0 },
-  { question: "Hình thang là tứ giác có:", answers: ["Hai cạnh đối song song", "Bốn cạnh bằng nhau", "Hai đường chéo bằng nhau", "Bốn góc vuông"], correct: 0 },
-  { question: "Hình bình hành có tính chất:", answers: ["Hai đường chéo cắt nhau tại trung điểm mỗi đường", "Hai đường chéo vuông góc", "Hai đường chéo bằng nhau", "Bốn cạnh bằng nhau"], correct: 0 },
-  { question: "Hình chữ nhật là hình bình hành có thêm:", answers: ["Một góc vuông", "Hai cạnh kề bằng nhau", "Hai đường chéo vuông góc", "Một đường chéo là đường phân giác"], correct: 0 },
-  { question: "Hình thoi là hình bình hành có thêm:", answers: ["Hai cạnh kề bằng nhau", "Một góc vuông", "Hai đường chéo bằng nhau", "Bốn góc bằng nhau"], correct: 0 },
-  { question: "Hình vuông là hình có:", answers: ["4 cạnh bằng nhau và 4 góc vuông", "4 cạnh bằng nhau", "4 góc vuông", "2 đường chéo bằng nhau"], correct: 0 },
-  { question: "Đường trung bình của hình thang thì:", answers: ["Song song với hai đáy và bằng nửa tổng hai đáy", "Bằng trung bình cộng hai cạnh bên", "Vuông góc với hai đáy", "Bằng nửa hiệu hai đáy"], correct: 0 },
-
-  // ═══════════════════════════════════════════════════════════════════
-  // HÌNH HỌC: ĐA GIÁC - DIỆN TÍCH
-  // ═══════════════════════════════════════════════════════════════════
-  { question: "Đa giác lồi $n$ cạnh có tổng các góc trong bằng:", answers: ["$(n-2) \\cdot 180°$", "$n \\cdot 180°$", "$(n-1) \\cdot 180°$", "$360°$"], correct: 0 },
-  { question: "Lục giác đều có mỗi góc trong bằng:", answers: ["$120°$", "$108°$", "$135°$", "$140°$"], correct: 0 },
-  { question: "Diện tích hình chữ nhật có chiều dài $a$, chiều rộng $b$ là:", answers: ["$S = a \\cdot b$", "$S = 2(a+b)$", "$S = a + b$", "$S = \\frac{a \\cdot b}{2}$"], correct: 0 },
-  { question: "Diện tích hình bình hành có đáy $a$, chiều cao $h$ là:", answers: ["$S = a \\cdot h$", "$S = \\frac{a \\cdot h}{2}$", "$S = 2ah$", "$S = a + h$"], correct: 0 },
-  { question: "Diện tích tam giác có đáy $a$, chiều cao $h$ là:", answers: ["$S = \\frac{1}{2}ah$", "$S = ah$", "$S = 2ah$", "$S = a + h$"], correct: 0 },
-  { question: "Diện tích hình thoi có hai đường chéo $d_1$ và $d_2$ là:", answers: ["$S = \\frac{d_1 \\cdot d_2}{2}$", "$S = d_1 \\cdot d_2$", "$S = \\frac{d_1 + d_2}{2}$", "$S = 2(d_1 + d_2)$"], correct: 0 },
-  { question: "Diện tích hình thang có đáy lớn $a$, đáy bé $b$, chiều cao $h$ là:", answers: ["$S = \\frac{(a+b)h}{2}$", "$S = (a+b)h$", "$S = \\frac{(a-b)h}{2}$", "$S = abh$"], correct: 0 }
+  // DỰ PHÒNG CÁC LOẠI CÂU KHÁC
+  { question: "Số $1$ là:", answers: ["Không phải số nguyên tố, không phải hợp số", "Số nguyên tố", "Hợp số", "Số chẵn"], correct: 0 },
+  { question: "Góc bẹt có số đo là:", answers: ["$180^o$", "$90^o$", "$60^o$", "$360^o$"], correct: 0 },
+  { question: "Hai đường thẳng song song là hai đường thẳng:", answers: ["Không có điểm chung", "Có 1 điểm chung", "Có 2 điểm chung", "Trùng nhau"], correct: 0 },
+  { question: "Lũy thừa $5^3$ có giá trị là:", answers: ["$125$", "$15$", "$25$", "$75$"], correct: 0 },
+  { question: "Phép nhân số nguyên có tính chất nào?", answers: ["Giao hoán, kết hợp, phân phối", "Chỉ giao hoán", "Chỉ kết hợp", "Không có tính chất nào"], correct: 0 }
 ];
 
 export const BACKUP_QUESTIONS: Question[] = [
-  // Câu hỏi dự phòng - hỗn hợp các chủ đề
-  { question: "Kết quả $(a-b)(a+b)$ bằng:", answers: ["$a^2 - b^2$", "$a^2 + b^2$", "$(a-b)^2$", "$(a+b)^2$"], correct: 0 },
-  { question: "Phân tích $x^2 + 2x + 1$ thành nhân tử:", answers: ["$(x+1)^2$", "$(x-1)^2$", "$(x+1)(x-1)$", "$x(x+2)+1$"], correct: 0 },
-  { question: "Điều kiện xác định của $\\frac{5}{2x+6}$ là:", answers: ["$x \\ne -3$", "$x \\ne 3$", "$x \\ne 0$", "$x \\ne -6$"], correct: 0 },
-  { question: "Trong hình bình hành ABCD, nếu $\\widehat{A} = 70°$ thì $\\widehat{B}$ bằng:", answers: ["$110°$", "$70°$", "$90°$", "$180°$"], correct: 0 },
-  { question: "Ngũ giác đều có mỗi góc trong bằng:", answers: ["$108°$", "$120°$", "$100°$", "$72°$"], correct: 0 },
-  { question: "Rút gọn $\\frac{x^2-9}{x+3}$ được:", answers: ["$x - 3$", "$x + 3$", "$x^2 - 3$", "$3 - x$"], correct: 0 },
-  { question: "$(3x - 2)^2$ bằng:", answers: ["$9x^2 - 12x + 4$", "$9x^2 + 12x + 4$", "$9x^2 - 4$", "$3x^2 - 4$"], correct: 0 },
-  { question: "Hình thang cân có tính chất:", answers: ["Hai đường chéo bằng nhau", "Hai đường chéo vuông góc", "Hai cạnh bên vuông góc", "Bốn góc bằng nhau"], correct: 0 }
+  { question: "Số nguyên tố nhỏ nhất là:", answers: ["$2$", "$1$", "$3$", "$0$"], correct: 0 },
+  { question: "BCNN(3, 4, 5) là:", answers: ["$60$", "$12$", "$20$", "$30$"], correct: 0 },
+  { question: "Kết quả $15 + (-3)$ bằng:", answers: ["$12$", "$18$", "$-12$", "$-18$"], correct: 0 },
+  { question: "Hình chữ nhật có độ dài hai cạnh là 3cm và 4cm. Diện tích là:", answers: ["$12cm^2$", "$7cm^2$", "$14cm^2$", "$24cm^2$"], correct: 0 },
+  { question: "Viết tập hợp $A = \\{x \\in \\mathbb{N} | 2 < x \\le 5\\}$:", answers: ["$\\{3; 4; 5\\}$", "$\\{2; 3; 4; 5\\}$", "$\\{3; 4\\}$", "$\\{2; 3; 4\\}$"], correct: 0 },
+  { question: "Số chia hết cho 9 thì:", answers: ["Tổng các chữ số chia hết cho 9", "Chữ số tận cùng là 9", "Tổng các chữ số chia hết cho 3", "Là số lẻ"], correct: 0 },
+  { question: "Diện tích hình vuông có cạnh 10m là:", answers: ["$100m^2$", "$40m^2$", "$20m^2$", "$1000m^2$"], correct: 0 },
+  { question: "Kết quả $2^3 . 2^2$ bằng:", answers: ["$2^5$", "$2^6$", "$4^5$", "$4^6$"], correct: 0 }
 ];
 
 export const PRIZES: Prize[] = [
