@@ -11,67 +11,102 @@ export const PHONE_HELPERS: PhoneHelper[] = [
 
 export const QUESTIONS: Question[] = [
   // ═══════════════════════════════════════════════════════════════════
-  // CHƯƠNG 1: SỐ TỰ NHIÊN - TẬP HỢP
+  // CHAPTER 1: ANCIENT MESOPOTAMIA - Cradle of Civilization
   // ═══════════════════════════════════════════════════════════════════
-  { question: "Tập hợp các số tự nhiên được kí hiệu là:", answers: ["$\\mathbb{N}$", "$\\mathbb{N}^*$", "$\\mathbb{Z}$", "$\\mathbb{Q}$"], correct: 0 },
-  { question: "Số nào sau đây là số nguyên tố?", answers: ["$2$", "$4$", "$6$", "$9$"], correct: 0 },
-  { question: "Kết quả của phép tính $3^2$ là:", answers: ["$9$", "$6$", "$5$", "$8$"], correct: 0 },
-  { question: "Số La Mã XIX có giá trị là:", answers: ["$19$", "$21$", "$18$", "$20$"], correct: 0 },
-  { question: "Thứ tự thực hiện phép tính đúng là:", answers: ["Lũy thừa -> Nhân/Chia -> Cộng/Trừ", "Nhân/Chia -> Lũy thừa -> Cộng/Trừ", "Cộng/Trừ -> Nhân/Chia -> Lũy thừa", "Từ trái sang phải"], correct: 0 },
-  { question: "BCNN(4, 6) là:", answers: ["$12$", "$24$", "$2$", "$4$"], correct: 0 },
-  { question: "ƯCLN(12, 18) là:", answers: ["$6$", "$3$", "$2$", "$12$"], correct: 0 },
-  { question: "Số nào chia hết cho cả 2 và 5?", answers: ["$10$", "$12$", "$15$", "$8$"], correct: 0 },
-  { question: "Phân tích 20 ra thừa số nguyên tố:", answers: ["$2^2 \\cdot 5$", "$2 \\cdot 10$", "$4 \\cdot 5$", "$20 \\cdot 1$"], correct: 0 },
-  { question: "Số nào sau đây chia hết cho 3?", answers: ["$123$", "$124$", "$125$", "$122$"], correct: 0 },
+  { question: "Which ancient civilization is known as the 'Cradle of Civilization'?", answers: ["Mesopotamia", "Egypt", "Greece", "Rome"], correct: 0 },
+  { question: "What is the name of the Sumerian writing system?", answers: ["Cuneiform", "Hieroglyphs", "Latin", "Sanskrit"], correct: 0 },
+  { question: "Who was the first empire builder in Mesopotamia?", answers: ["Sargon of Akkad", "Hammurabi", "Nebuchadnezzar", "Gilgamesh"], correct: 0 },
+  { question: "The Code of Hammurabi is an example of what characteristic of civilization?", answers: ["Written laws", "Agriculture", "Trade", "Religion"], correct: 0 },
+  { question: "Which civilization invented the wheel?", answers: ["Sumerians", "Egyptians", "Greeks", "Romans"], correct: 0 },
+  { question: "The land between the Tigris and Euphrates rivers is called:", answers: ["Mesopotamia", "Nile Valley", "Indus Valley", "Yellow River"], correct: 0 },
+  { question: "Ziggurats were built by the Mesopotamians as:", answers: ["Religious temples", "Palaces", "Granaries", "Fortresses"], correct: 0 },
+  { question: "Which Mesopotamian civilization created the first known code of laws?", answers: ["Babylonians", "Sumerians", "Assyrians", "Persians"], correct: 0 },
+  { question: "What material did Mesopotamians use to make writing tablets?", answers: ["Clay", "Papyrus", "Stone", "Wood"], correct: 0 },
+  { question: "The Epic of Gilgamesh is one of the world's oldest:", answers: ["Stories/Epics", "Laws", "Maps", "Calendars"], correct: 0 },
 
   // ═══════════════════════════════════════════════════════════════════
-  // CHƯƠNG 2: SỐ NGUYÊN
+  // CHAPTER 2: ANCIENT EGYPT - Land of Pharaohs
   // ═══════════════════════════════════════════════════════════════════
-  { question: "Tập hợp các số nguyên kí hiệu là:", answers: ["$\\mathbb{Z}$", "$\\mathbb{N}$", "$\\mathbb{N}^*$", "$\\mathbb{Q}$"], correct: 0 },
-  { question: "Kết quả của $(-5) + (-3)$ là:", answers: ["$-8$", "$8$", "$2$", "$-2$"], correct: 0 },
-  { question: "Số đối của $-7$ là:", answers: ["$7$", "$-7$", "$0$", "$\\frac{1}{7}$"], correct: 0 },
-  { question: "Kết quả phép tính $10 - (-2)$ là:", answers: ["$12$", "$8$", "$-12$", "$-8$"], correct: 0 },
-  { question: "Sắp xếp các số sau theo thứ tự tăng dần: $-2; 0; -5; 3$", answers: ["$-5; -2; 0; 3$", "$-2; -5; 0; 3$", "$0; -2; -5; 3$", "$3; 0; -2; -5$"], correct: 0 },
-  { question: "Tích của hai số nguyên âm là:", answers: ["Số nguyên dương", "Số nguyên âm", "Số 0", "Số tự nhiên"], correct: 0 },
-  { question: "Kết quả của $(-3) \\cdot 4$ là:", answers: ["$-12$", "$12$", "$1$", "$-7$"], correct: 0 },
-  { question: "Giá trị tuyệt đối của $-15$ là:", answers: ["$15$", "$-15$", "$0$", "$1$"], correct: 0 },
-  { question: "Ước của $-3$ gồm:", answers: ["$\\{1; -1; 3; -3\\}$", "$\\{1; 3\\}$", "$\\{-1; -3\\}$", "$\\{3; -3\\}$"], correct: 0 },
-  { question: "Tổng của số nguyên âm lớn nhất và số nguyên dương nhỏ nhất là:", answers: ["$0$", "$2$", "$-2$", "$1$"], correct: 0 },
+  { question: "What was the Egyptian writing system called?", answers: ["Hieroglyphs", "Cuneiform", "Alphabet", "Pictographs"], correct: 0 },
+  { question: "The Nile River was important to Ancient Egypt because it:", answers: ["Provided fertile soil for farming", "Was used only for drinking water", "Had no fish", "Flooded unpredictably"], correct: 0 },
+  { question: "What were the pyramids built for?", answers: ["Tombs for pharaohs", "Temples for worship", "Homes for nobles", "Military fortresses"], correct: 0 },
+  { question: "Who was considered a god-king in Ancient Egypt?", answers: ["The Pharaoh", "The Priest", "The Scribe", "The Soldier"], correct: 0 },
+  { question: "What is the process used by Ancient Egyptians to preserve dead bodies?", answers: ["Mummification", "Cremation", "Burial", "Embalming"], correct: 0 },
+  { question: "The Great Pyramid of Giza was built for which pharaoh?", answers: ["Khufu (Cheops)", "Tutankhamun", "Ramses II", "Cleopatra"], correct: 0 },
+  { question: "What stone helped historians decode Egyptian hieroglyphs?", answers: ["Rosetta Stone", "Code of Hammurabi", "Dead Sea Scrolls", "Tablet of Destiny"], correct: 0 },
+  { question: "Which river did Ancient Egypt build itself on?", answers: ["Nile River", "Tigris River", "Euphrates River", "Indus River"], correct: 0 },
+  { question: "The Sphinx has the body of a lion and the head of a:", answers: ["Human", "Eagle", "Snake", "Bull"], correct: 0 },
+  { question: "What material did Egyptians use to make paper-like writing material?", answers: ["Papyrus", "Clay", "Animal skin", "Wood"], correct: 0 },
 
   // ═══════════════════════════════════════════════════════════════════
-  // CHƯƠNG 3: HÌNH HỌC TRỰC QUAN
+  // CHAPTER 3: ANCIENT GREECE - Birthplace of Democracy
   // ═══════════════════════════════════════════════════════════════════
-  { question: "Tam giác đều có tính chất nào?", answers: ["3 cạnh bằng nhau, 3 góc bằng nhau", "3 cạnh bằng nhau, 1 góc vuông", "2 cạnh bằng nhau", "3 góc khác nhau"], correct: 0 },
-  { question: "Hình vuông có mấy trục đối xứng?", answers: ["$4$", "$2$", "$1$", "$8$"], correct: 0 },
-  { question: "Chu vi hình chữ nhật có chiều dài 5cm, chiều rộng 3cm là:", answers: ["$16cm$", "$15cm$", "$8cm$", "$24cm$"], correct: 0 },
-  { question: "Diện tích hình thoi có hai đường chéo là 6cm và 8cm là:", answers: ["$24cm^2$", "$48cm^2$", "$14cm^2$", "$28cm^2$"], correct: 0 },
-  { question: "Hình bình hành có diện tích 20cm², chiều cao 4cm. Độ dài đáy tương ứng là:", answers: ["$5cm$", "$80cm$", "$16cm$", "$10cm$"], correct: 0 },
-  { question: "Trong hình thang cân, hai đường chéo:", answers: ["Bằng nhau", "Vuông góc", "Cắt nhau tại trung điểm", "Song song"], correct: 0 },
-  { question: "Hình lục giác đều được ghép bởi mấy tam giác đều?", answers: ["$6$", "$4$", "$5$", "$8$"], correct: 0 },
-  { question: "Công thức tính diện tích hình thang:", answers: ["$\\frac{(a+b)h}{2}$", "$(a+b)h$", "$ab$", "$\\frac{ah}{2}$"], correct: 0 },
-  { question: "Hình nào sau đây luôn có tâm đối xứng?", answers: ["Hình bình hành", "Hình thang cân", "Tam giác đều", "Hình thang vuông"], correct: 0 },
-  { question: "Chu vi hình vuông có diện tích $36cm^2$ là:", answers: ["$24cm$", "$20cm$", "$18cm$", "$12cm$"], correct: 0 },
+  { question: "Which famous Greek philosopher tutored Alexander the Great?", answers: ["Aristotle", "Plato", "Socrates", "Pythagoras"], correct: 0 },
+  { question: "Greece is located on a _____, which means land surrounded by water on 3 sides.", answers: ["Peninsula", "Island", "Continent", "Archipelago"], correct: 0 },
+  { question: "What was a Greek city-state called?", answers: ["Polis", "Empire", "Kingdom", "Colony"], correct: 0 },
+  { question: "Which Greek city-state was known for its powerful military?", answers: ["Sparta", "Athens", "Corinth", "Thebes"], correct: 0 },
+  { question: "Which Greek city-state is credited with developing democracy?", answers: ["Athens", "Sparta", "Troy", "Macedonia"], correct: 0 },
+  { question: "The ancient Olympic Games were held in honor of which Greek god?", answers: ["Zeus", "Apollo", "Athena", "Poseidon"], correct: 0 },
+  { question: "What is the Parthenon?", answers: ["A temple dedicated to Athena", "A palace for kings", "An amphitheater", "A marketplace"], correct: 0 },
+  { question: "Who wrote the epic poems 'The Iliad' and 'The Odyssey'?", answers: ["Homer", "Herodotus", "Sophocles", "Euripides"], correct: 0 },
+  { question: "What geometric shape did the Greeks use extensively in their architecture?", answers: ["Columns/Pillars", "Triangles only", "Circles only", "Squares only"], correct: 0 },
+  { question: "Alexander the Great spread Greek culture throughout:", answers: ["Asia and North Africa", "Only Greece", "Only Europe", "Only Africa"], correct: 0 },
 
   // ═══════════════════════════════════════════════════════════════════
-  // NÂNG CAO - TỔNG HỢP
+  // CHAPTER 4: ANCIENT ROME - The Eternal City
   // ═══════════════════════════════════════════════════════════════════
-  { question: "Tìm $x$ biết $2^x = 16$:", answers: ["$x=4$", "$x=3$", "$x=5$", "$x=2$"], correct: 0 },
-  { question: "Số tự nhiên nhỏ nhất chia hết cho cả 3, 4, 5 là:", answers: ["$60$", "$30$", "$120$", "$15$"], correct: 0 },
-  { question: "Tổng $S = 1 + 2 + 3 + ... + 100$ bằng:", answers: ["$5050$", "$5000$", "$5100$", "$5150$"], correct: 0 },
-  { question: "ƯCLN(24, 36, 60) là:", answers: ["$12$", "$6$", "$24$", "$4$"], correct: 0 },
-  { question: "Trong phép chia có dư, số dư phải:", answers: ["Nhỏ hơn số chia", "Lớn hơn số chia", "Bằng số chia", "Lớn hơn 1"], correct: 0 },
-  { question: "Giá trị biểu thức $100 - (70 - 45)$ là:", answers: ["$75$", "$25$", "$15$", "$65$"], correct: 0 },
-  { question: "Có bao nhiêu số nguyên $x$ sao cho $|x| < 3$?", answers: ["$5$", "$4$", "$3$", "$6$"], correct: 0 },
-  { question: "Hình thoi có chu vi 20cm thì cạnh của nó là:", answers: ["$5cm$", "$4cm$", "$10cm$", "$2cm$"], correct: 0 },
-  { question: "Để số $\\overline{1x2}$ chia hết cho 3, $x$ có thể là:", answers: ["$0; 3; 6; 9$", "$1; 4; 7$", "$2; 5; 8$", "$3; 6; 9$"], correct: 0 },
-  { question: "Nếu $a$ chia hết cho $m$ và $b$ chia hết cho $m$ thì:", answers: ["$(a+b)$ chia hết cho $m$", "$(a+b)$ không chia hết cho $m$", "$a.b$ không chia hết cho $m$", "$a-b$ không chia hết cho $m$"], correct: 0 },
+  { question: "What was the first form of government in Rome?", answers: ["Republic", "Monarchy", "Empire", "Democracy"], correct: 0 },
+  { question: "Who was the first Emperor to become Christian?", answers: ["Constantine", "Julius Caesar", "Augustus", "Nero"], correct: 0 },
+  { question: "What language did the Romans speak?", answers: ["Latin", "Greek", "Hebrew", "Arabic"], correct: 0 },
+  { question: "The Roman Colosseum was used for:", answers: ["Gladiator fights and entertainment", "Religious ceremonies only", "Government meetings", "Housing citizens"], correct: 0 },
+  { question: "What famous Roman general crossed the Rubicon River?", answers: ["Julius Caesar", "Mark Antony", "Pompey", "Brutus"], correct: 0 },
+  { question: "The period of peace and prosperity in Rome was called:", answers: ["Pax Romana", "Renaissance", "Golden Age", "Republic Era"], correct: 0 },
+  { question: "What is an aqueduct?", answers: ["A structure to carry water", "A type of road", "A building for worship", "A military fort"], correct: 0 },
+  { question: "Which mountain range protected Rome from northern invasions?", answers: ["Alps", "Himalayas", "Pyrenees", "Andes"], correct: 0 },
+  { question: "The Roman numeral 'X' represents what number?", answers: ["10", "5", "50", "100"], correct: 0 },
+  { question: "What was the Roman forum?", answers: ["A public marketplace and meeting place", "An army training ground", "A temple", "A palace"], correct: 0 },
 
-  // DỰ PHÒNG CÁC LOẠI CÂU KHÁC
-  { question: "Số $1$ là:", answers: ["Không phải số nguyên tố, không phải hợp số", "Số nguyên tố", "Hợp số", "Số chẵn"], correct: 0 },
-  { question: "Góc bẹt có số đo là:", answers: ["$180^o$", "$90^o$", "$60^o$", "$360^o$"], correct: 0 },
-  { question: "Hai đường thẳng song song là hai đường thẳng:", answers: ["Không có điểm chung", "Có 1 điểm chung", "Có 2 điểm chung", "Trùng nhau"], correct: 0 },
-  { question: "Lũy thừa $5^3$ có giá trị là:", answers: ["$125$", "$15$", "$25$", "$75$"], correct: 0 },
-  { question: "Phép nhân số nguyên có tính chất nào?", answers: ["Giao hoán, kết hợp, phân phối", "Chỉ giao hoán", "Chỉ kết hợp", "Không có tính chất nào"], correct: 0 }
+  // ═══════════════════════════════════════════════════════════════════
+  // CHAPTER 5: ANCIENT CHINA - The Middle Kingdom
+  // ═══════════════════════════════════════════════════════════════════
+  { question: "What river did Ancient China build itself on?", answers: ["Yellow River (Huang He)", "Yangtze River", "Mekong River", "Nile River"], correct: 0 },
+  { question: "The Great Wall of China was built to:", answers: ["Protect from invasions", "Show wealth", "Mark boundaries only", "Store grains"], correct: 0 },
+  { question: "What important material did the Chinese invent for writing and art?", answers: ["Paper", "Papyrus", "Parchment", "Clay tablets"], correct: 0 },
+  { question: "Which Chinese philosophy emphasizes respect for elders and social order?", answers: ["Confucianism", "Buddhism", "Taoism", "Legalism"], correct: 0 },
+  { question: "What luxury item did China trade along the Silk Road?", answers: ["Silk", "Spices", "Gold", "Ivory"], correct: 0 },
+  { question: "The Terracotta Army was built for which Chinese emperor?", answers: ["Qin Shi Huang", "Han Wudi", "Tang Taizong", "Confucius"], correct: 0 },
+  { question: "What were oracle bones used for in Ancient China?", answers: ["Predicting the future/divination", "Writing stories", "Building materials", "Currency"], correct: 0 },
+  { question: "Which dynasty began the construction of the Great Wall?", answers: ["Qin Dynasty", "Han Dynasty", "Tang Dynasty", "Ming Dynasty"], correct: 0 },
+  { question: "What important navigation tool did the Chinese invent?", answers: ["Compass", "Telescope", "Sextant", "Astrolabe"], correct: 0 },
+  { question: "Chinese writing uses:", answers: ["Characters/Logograms", "Alphabet", "Cuneiform", "Hieroglyphs"], correct: 0 },
+
+  // ═══════════════════════════════════════════════════════════════════
+  // CHAPTER 6: ANCIENT INDIA - Land of Diversity
+  // ═══════════════════════════════════════════════════════════════════
+  { question: "Which river valley was home to one of India's earliest civilizations?", answers: ["Indus River Valley", "Ganges River Valley", "Nile River Valley", "Tigris River Valley"], correct: 0 },
+  { question: "What major religion originated in Ancient India?", answers: ["Hinduism and Buddhism", "Christianity", "Islam", "Judaism"], correct: 0 },
+  { question: "The caste system in Ancient India divided people into:", answers: ["Social classes based on birth", "Rich and poor only", "Citizens and slaves", "Farmers and warriors"], correct: 0 },
+  { question: "Who founded Buddhism?", answers: ["Siddhartha Gautama (Buddha)", "Confucius", "Mahavira", "Krishna"], correct: 0 },
+  { question: "What ancient Indian cities showed advanced urban planning?", answers: ["Harappa and Mohenjo-daro", "Delhi and Mumbai", "Varanasi and Agra", "Calcutta and Chennai"], correct: 0 },
+  { question: "What number system did Ancient India give to the world?", answers: ["Decimal system with zero", "Roman numerals", "Binary system", "Hexadecimal system"], correct: 0 },
+  { question: "The sacred texts of Hinduism are called:", answers: ["Vedas", "Bible", "Quran", "Torah"], correct: 0 },
+  { question: "What achievement is Ancient India known for in medicine?", answers: ["Ayurveda and surgery", "Modern chemistry", "Antibiotics", "Vaccines"], correct: 0 },
+  { question: "The Mauryan Empire's most famous ruler who spread Buddhism was:", answers: ["Ashoka", "Chandragupta", "Akbar", "Shah Jahan"], correct: 0 },
+  { question: "Sanskrit is an ancient language of:", answers: ["India", "China", "Greece", "Rome"], correct: 0 },
+
+  // ═══════════════════════════════════════════════════════════════════
+  // CHAPTER 7: GENERAL ANCIENT CIVILIZATIONS - Cross-Cultural Knowledge
+  // ═══════════════════════════════════════════════════════════════════
+  { question: "What do all early civilizations have in common?", answers: ["Developed near rivers", "Built in deserts", "Had no government", "Avoided trade"], correct: 0 },
+  { question: "The study of ancient writings and artifacts is called:", answers: ["Archaeology", "Geology", "Biology", "Astronomy"], correct: 0 },
+  { question: "What was the main reason ancient civilizations needed rivers?", answers: ["Water for crops and drinking", "Transportation only", "Religious ceremonies", "Defense from enemies"], correct: 0 },
+  { question: "A surplus of food in ancient civilizations led to:", answers: ["Specialization of jobs", "Famine", "War", "Migration"], correct: 0 },
+  { question: "What type of government is ruled by religious leaders?", answers: ["Theocracy", "Democracy", "Republic", "Monarchy"], correct: 0 },
+  { question: "Trade routes connecting East and West were called:", answers: ["Silk Road", "Spice Road", "King's Highway", "Royal Road"], correct: 0 },
+  { question: "Which ancient wonder of the world still stands today?", answers: ["Great Pyramid of Giza", "Hanging Gardens of Babylon", "Colossus of Rhodes", "Lighthouse of Alexandria"], correct: 0 },
+  { question: "Polytheism means belief in:", answers: ["Many gods", "One god", "No gods", "Nature spirits only"], correct: 0 },
+  { question: "What is a primary source in history?", answers: ["A document/artifact from the time period", "A modern textbook", "A movie about history", "A teacher's lecture"], correct: 0 },
+  { question: "Pictographs and ideographs are examples of:", answers: ["Early writing systems", "Trade goods", "Types of government", "Religious beliefs"], correct: 0 }
 ];
 
 export const BACKUP_QUESTIONS: Question[] = [
