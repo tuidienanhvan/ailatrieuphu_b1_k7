@@ -90,3 +90,32 @@ export interface ShopItem {
   color: string;
   rarity: 'common' | 'rare' | 'epic' | 'legendary';
 }
+
+// API Response Types
+export interface QuestionData {
+  q_id: number;
+  q_code: string;
+  q_type: "multiple-choice" | "true-false" | "short-answer";
+  q_bloom?: string;
+  q_difficulty?: "easy" | "medium" | "hard";
+  q_content: {
+    text: string;
+    html?: string;
+    plain?: string;
+  };
+  q_answers: {
+    label: string;
+    text: string;
+    correct?: boolean;
+  }[];
+  q_solution?: {
+    type: "text" | "step_by_step";
+    text: string;
+    image?: string;
+  };
+  q_tags?: string[];
+  taxo_subject?: string;
+  taxo_section?: string;
+  taxo_subsection?: string;
+  taxo_lot?: string;
+}

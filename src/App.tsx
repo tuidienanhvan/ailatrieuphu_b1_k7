@@ -54,13 +54,18 @@ export const App: React.FC = () => {
     const currentLevel = useGameStore.getState().currentLevel;
     const nextTier = getTierIdByLevel(currentLevel + 1) as 1 | 2 | 3;
 
-    // Move to next level first
-    nextLevel();
+    // Force re-mount of PlayScreen to ensure clean state
+    setGameState(GameState.WELCOME);
 
-    // Then start the new tier (resets lifelines)
-    startTier(nextTier);
+    setTimeout(() => {
+      // Move to next level first
+      nextLevel();
 
-    playSound('start');
+      // Then start the new tier (resets lifelines)
+      startTier(nextTier);
+
+      playSound('start');
+    }, 50);
   }, [nextLevel, startTier]);
 
   // Handle Toggle Shop Logic

@@ -37,59 +37,19 @@ export const TIER_THEMES: TierTheme[] = [
         accentColor: '#3b82f6',
         glowColor: 'rgba(59, 130, 246, 0.3)',
         timerDuration: 30,
-    },
-    {
-        id: 2,
-        name: 'Thử Thách',
-        description: 'Độ khó tăng lên',
-        startLevel: 15,
-        endLevel: 29,
-        primaryGradient: 'linear-gradient(180deg, #2d1b69 0%, #4a148c 50%, #1a0033 100%)',
-        accentColor: '#a855f7',
-        glowColor: 'rgba(168, 85, 247, 0.3)',
-        timerDuration: 25,
-    },
-    {
-        id: 3,
-        name: 'Đỉnh Cao',
-        description: 'Thử thách cuối cùng',
-        startLevel: 30,
-        endLevel: 44,
-        primaryGradient: 'linear-gradient(180deg, #1a0000 0%, #7f1d1d 50%, #450a0a 100%)',
-        accentColor: '#ef4444',
-        glowColor: 'rgba(239, 68, 68, 0.3)',
-        timerDuration: 20,
-    },
+    }
 ];
 
 /**
  * Lấy theme theo level hiện tại (0-indexed)
  */
 export function getTierByLevel(level: number): TierTheme {
-    const tier = TIER_THEMES.find(t => level >= t.startLevel && level <= t.endLevel);
-    return tier || TIER_THEMES[0];
+    return TIER_THEMES[0];
 }
 
 /**
  * Lấy tier ID theo level (0-indexed)
  */
 export function getTierIdByLevel(level: number): 1 | 2 | 3 {
-    if (level < 15) return 1;
-    if (level < 30) return 2;
-    return 3;
-}
-
-/**
- * Kiểm tra xem level có phải là tier milestone không (cuối tier)
- */
-export function isTierMilestone(level: number): boolean {
-    return level === 14 || level === 29 || level === 44;
-}
-
-/**
- * Lấy tier tiếp theo sau milestone
- */
-export function getNextTier(currentTier: 1 | 2 | 3): TierTheme | null {
-    if (currentTier >= 3) return null;
-    return TIER_THEMES.find(t => t.id === currentTier + 1) || null;
+    return 1;
 }

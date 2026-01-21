@@ -2,8 +2,8 @@
 import { useState, useCallback } from 'react';
 import { useGameStore } from '../../store/useGameStore';
 import { playSound } from '../../utils/audio-manager';
-import { TOTAL_LEVELS } from '../../data/game-constants';
-import { isTierMilestone } from '../../data/level-themes';
+import { TOTAL_LEVELS, PRIZES } from '../../data/game-constants';
+
 import { GameState } from '../../types/common';
 
 export const useAnswers = (
@@ -24,9 +24,8 @@ export const useAnswers = (
   const currentLevel = useGameStore(s => s.currentLevel);
   const gameQuestions = useGameStore(s => s.gameQuestions);
 
-  // Import helper để lấy prize amount
+  // Helper để lấy prize amount
   const getPrizeAmountLocal = (level: number) => {
-    const { PRIZES } = require('../../data/game-constants');
     return PRIZES[level]?.amount || '0đ';
   };
 
@@ -57,20 +56,15 @@ export const useAnswers = (
 
         // Wait for correct animation
         setTimeout(() => {
-          // Check if this is a tier milestone (end of tier 1 or 2)
-          if (isTierMilestone(currentLevel) && currentLevel < TOTAL_LEVELS - 1) {
-            // TIER COMPLETE - Show ResultScreen with "Continue" option
-            setFinalPrize(getPrizeAmountLocal(currentLevel));
-            setGameState(GameState.TIER_COMPLETE);
-            playSound('win');
-          } else if (currentLevel < TOTAL_LEVELS - 1) {
-            // NEXT LEVEL within same tier
+          // Check for Victory or Next Level
+          if (currentLevel < TOTAL_LEVELS - 1) {
+            // NEXT LEVEL
             setAnswerState('default');
             setSelectedAnswer(null);
             nextLevel();
             startTimer();
           } else {
-            // VICTORY - completed all 45 questions
+            // VICTORY - completed all questions
             handleGameOver('victory');
           }
         }, 2000);

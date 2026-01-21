@@ -255,52 +255,66 @@ function sendToBridge(data: MinigameMessage) {
 // ============================================================================
 // FETCH QUIZ DATA
 // ============================================================================
-export async function fetchQuizData(mateId: string = 'math_lesson_001'): Promise<{ questions: Question[], backups: Question[] } | null> {
+export interface QuestionPoolConfig {
+  taxo_subject?: string;
+  taxo_section?: string;
+  taxo_subsection?: string;
+  quantity?: number;
+}
+
+// Default config - derived from gameKey "minigame-ai-la-trieu-phu" for AIPRO 6
+const DEFAULT_CONFIG: QuestionPoolConfig = {
+  taxo_subject: 'AIPRO_6',
+  taxo_section: 'MODULE_1_AI_DOI_SONG',
+  taxo_subsection: 'BAI_1_AI_QUANH_TA',
+  quantity: 15
+};
+
+export async function fetchQuizData(config: QuestionPoolConfig = DEFAULT_CONFIG): Promise<{ questions: Question[], backups: Question[] } | null> {
   try {
-    let isLocal = false;
-    if (typeof window !== 'undefined') {
-      const hostname = window.location.hostname;
-      isLocal = hostname === 'localhost' || hostname === '127.0.0.1' || hostname.startsWith('192.168.');
-    }
+    // Merge with defaults
+    const finalConfig = { ...DEFAULT_CONFIG, ...config };
 
-    const BASE_URL = isLocal ? '' : 'https://pistudy.vn';
-    const finalUrl = `${BASE_URL}/api/minigames/question-pool/${mateId}/`;
+    // Build Query String
+    const params = new URLSearchParams();
+    params.set('quantity', String(finalConfig.quantity || 15));
+    if (finalConfig.taxo_subject) params.set('taxo_subject', finalConfig.taxo_subject);
+    if (finalConfig.taxo_section) params.set('taxo_section', finalConfig.taxo_section);
+    if (finalConfig.taxo_subsection) params.set('taxo_subsection', finalConfig.taxo_subsection);
 
-    console.log(`[GameAPI] Connecting to: ${finalUrl}`);
+    const apiUrl = `https://pistudy.vn/api/question_bank/random/?${params.toString()}`;
 
-    const response = await fetch(finalUrl);
+    console.log(`[GameAPI] Connecting to: ${apiUrl}`);
+
+    const response = await fetch(apiUrl);
 
     if (!response.ok) {
-      throw new Error(`API Error Status: ${response.status} ${response.statusText}`);
+      throw new Error(`API Error: ${response.status}`);
     }
 
-    const data: PistudyResponse = await response.json();
-    const rawPool = data.mate_content?.question_pool || [];
+    const rawData: any[] = await response.json();
 
-    if (rawPool.length === 0) {
-      console.warn("[GameAPI] API returned empty pool.");
+    if (!Array.isArray(rawData) || rawData.length === 0) {
+      console.warn("[GameAPI] API returned empty or invalid list.");
       return null;
     }
 
-    console.log(`[GameAPI] Successfully loaded ${rawPool.length} questions.`);
-
-    const mappedQuestions: Question[] = rawPool.map((q) => {
-      const allAnswers = [q.answer_true, ...q.answer_false];
-      const shuffledAnswers = shuffleArray(allAnswers);
-      const correctIndex = shuffledAnswers.indexOf(q.answer_true);
+    // Map QuestionData to Game Question Interface
+    const questions: Question[] = rawData.map((q: any) => {
+      const qAnswers = q.q_answers || [];
+      let answersText = qAnswers.map((a: any) => a.text);
+      let correctIndex = qAnswers.findIndex((a: any) => a.correct);
+      if (correctIndex === -1) correctIndex = 0;
 
       return {
-        question: q.question,
-        answers: shuffledAnswers,
+        question: q.q_content?.text || q.q_content?.plain || "Câu hỏi lỗi",
+        answers: answersText,
         correct: correctIndex
       };
     });
 
-    const fullPool = shuffleArray(mappedQuestions);
-    const questions = fullPool.slice(0, 15);
-    const backups = fullPool.slice(15);
-
-    return { questions, backups };
+    console.log(`[GameAPI] Successfully loaded ${questions.length} questions.`);
+    return { questions, backups: [] };
 
   } catch (error) {
     console.warn(`[GameAPI] Fetch failed (${error instanceof Error ? error.message : 'Unknown'}). Using offline data.`);

@@ -42,7 +42,7 @@ export const gameActions = {
 
   fetchAndStartGame: () => useGameStore.getState().fetchAndStartGame(),
   startGame: (questions: Question[], backups: Question[]) => useGameStore.getState().startGame(questions, backups),
-  startTier: (tier: 1 | 2 | 3) => useGameStore.getState().startTier(tier),
+
   nextLevel: () => useGameStore.getState().nextLevel(),
   useLifeline: (name: keyof Lifelines) => useGameStore.getState().useLifeline(name),
   replaceCurrentQuestion: (newQuestion: Question) => useGameStore.getState().replaceCurrentQuestion(newQuestion),
