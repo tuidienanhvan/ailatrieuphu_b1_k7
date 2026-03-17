@@ -1,5 +1,5 @@
 ﻿import { Prize } from '@game/types';
-import { GameConfig } from '@platform/config/types';
+import { GameConfig } from '@game/config/types';
 
 export const GAME_CONFIG: GameConfig = {
   totalLevels: 15,

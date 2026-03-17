@@ -1,4 +1,4 @@
-import { BaseAudioEngine } from '@platform/audio/BaseAudioEngine';
+import { BaseAudioEngine } from '@game/audio/BaseAudioEngine';
 
 export type SoundType = 'correct' | 'wrong' | 'lifeline' | 'win' | 'lose' | 'select' | 'start' | 'tick' | 'heartbeat';
 

@@ -1,4 +1,4 @@
-﻿import { sendPurchase, sendResult } from '@platform/bridge/sender';
+﻿import { sendPurchase, sendResult } from '@game/bridge/sender';
 import { Question } from '@game/types';
 
 /**

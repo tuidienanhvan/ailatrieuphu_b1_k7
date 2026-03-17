@@ -1,6 +1,7 @@
 /**
  * CORE GAME TYPES - ULTIMATE
  * Centralized Domain Models & App States for AI Là Triệu Phú
+ * All game logic and platform contracts unified here.
  */
 
 // --- Design System Tokens ---
@@ -36,14 +37,17 @@ export interface ThemeTokens {
 
 // --- Application States & UI Logic ---
 
+/**
+ * Game application states
+ */
 export enum GameState {
-  WELCOME,
-  PLAYING,
-  GAME_OVER,
-  VICTORY,
-  TIER_COMPLETE,
-  SHOP,
-  HISTORY
+  WELCOME = 'WELCOME',
+  PLAYING = 'PLAYING',
+  GAME_OVER = 'GAME_OVER',
+  VICTORY = 'VICTORY',
+  TIER_COMPLETE = 'TIER_COMPLETE',
+  SHOP = 'SHOP',
+  HISTORY = 'HISTORY'
 }
 
 export type ModalType = 'none' | 'phone' | 'message' | 'audience' | 'ai' | 'stop';
@@ -73,36 +77,93 @@ export interface VisualState {
   audienceBars: number[];
 }
 
-// --- Logging & Telemetry ---
+// --- Event System ---
 
-export type LogActionType =
-  | 'GAME_START'
-  | 'ANSWER'
-  | 'USE_LIFELINE'
-  | 'SHOP_PURCHASE'
-  | 'GAME_END'
-  | 'TIER_START';
+/**
+ * Conditions that trigger event checks
+ */
+export type EventCondition = 'on_correct' | 'on_wrong' | 'on_timeout' | 'on_lifeline' | 'on_start';
 
-export interface GameLogEvent {
-  timestamp: number;
-  level: number;
-  action: LogActionType;
-  details: any;
+/**
+ * Event type categories
+ */
+export type EventType = 'funny' | 'special' | 'reward' | 'penalty';
+
+/**
+ * Effect to apply after event display
+ */
+export type EventAfterEffect = 'continue' | 'show_real_question' | 'add_bonus';
+
+/**
+ * Trigger condition for when an event should check for activation
+ */
+export interface EventTrigger {
+  level?: number | number[];
+  probability?: number; // 0-1
+  condition?: EventCondition;
 }
 
-// --- Domain Models ---
+/**
+ * A game event that can trigger during gameplay
+ */
+export interface GameEvent {
+  id: string;
+  type: EventType;
+  trigger: EventTrigger;
+  message: string;
+  duration: number; // milliseconds
+  showOverlay?: boolean;
+  afterEffect?: EventAfterEffect;
+}
 
+// --- Utility Domain Types ---
+
+/**
+ * Basic Question interface
+ */
 export interface Question {
   question: string;
   answers: string[];
   correct: number;
 }
 
+/**
+ * Basic Prize interface
+ */
 export interface Prize {
   level: number;
   amount: string;
   milestone: boolean;
 }
+
+// --- Logging & Telemetry ---
+
+/**
+ * Action types that can be logged during gameplay
+ */
+export type LogActionType =
+  | 'GAME_START'
+  | 'ANSWER'
+  | 'USE_LIFELINE'
+  | 'SHOP_PURCHASE'
+  | 'GAME_END'
+  | 'TIER_START'
+  | 'GAME_PAUSE'
+  | 'GAME_RESUME'
+  | 'LIFELINE_EXHAUSTED'
+  | 'EVENT_TRIGGERED';
+
+/**
+ * Log entry for a single game event
+ */
+export interface GameLogEvent {
+  timestamp: number;
+  level: number;
+  action: LogActionType;
+  details: Record<string, any>;
+}
+
+// --- User & Economy Models ---
 
 export interface MatchRecord {
   id: string;
@@ -113,6 +174,9 @@ export interface MatchRecord {
   score: number;
 }
 
+/**
+ * Server-side history record for results and purchases
+ */
 export interface ServerHistoryRecord {
   id?: number;
   msgtype: 'RESULT' | 'PURCHASE' | string;
@@ -122,7 +186,7 @@ export interface ServerHistoryRecord {
     userId?: number;
     username?: string;
     gameKey?: string;
-    result?: 'victory' | 'gameover' | 'stop';
+    result?: 'victory' | 'gameover' | 'stop' | string;
     level?: number;
     score?: number;
     xp?: number;
@@ -133,9 +197,10 @@ export interface ServerHistoryRecord {
     wrongAnswerLevel?: number | null;
     itemId?: string;
     itemName?: string;
-    itemType?: 'lifeline' | 'skin';
+    itemType?: string;
     price?: number;
     balanceAfter?: number;
+    [key: string]: any;
   };
 }
 
@@ -154,8 +219,6 @@ export interface UserInfo {
   history: MatchRecord[];
   serverHistory: ServerHistoryRecord[];
 }
-
-// --- Economy ---
 
 export type ItemType = 'skin' | 'lifeline' | 'avatar';
 

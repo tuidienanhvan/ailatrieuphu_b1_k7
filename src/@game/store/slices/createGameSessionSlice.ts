@@ -3,7 +3,7 @@ import { GameState, Lifelines, Question } from '@game/types';
 import { QUESTIONS, BACKUP_QUESTIONS } from '@game/defaults/questions.defaults';
 import { GAME_CONFIG, TOTAL_LEVELS } from '@game/defaults/game.defaults';
 import { fetchQuizData } from '../../data/game-api';
-import { shuffleArray } from '@platform/utils/shuffle';
+import { shuffleArray } from '@game/utils/shuffle';
 import { GameStoreState } from '../useGameStore';
 
 export interface GameSessionSlice {

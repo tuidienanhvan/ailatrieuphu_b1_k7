@@ -4,7 +4,7 @@
  */
 
 import React, { useMemo } from 'react';
-import LatexDisplay from '@platform/components/LatexDisplay';
+import LatexDisplay from '@game/components/LatexDisplay';
 import { Zap, ShieldCheck, AlertCircle, Radio } from 'lucide-react';
 
 interface AnswerCardProps {

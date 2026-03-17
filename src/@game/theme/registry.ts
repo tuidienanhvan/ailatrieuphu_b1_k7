@@ -13,8 +13,6 @@ import PremierTheme from './premier/index';
  */
 export const THEMES: Record<string, ThemePackage> = {
   premier: PremierTheme,
-  // natural: NaturalTheme,
-  // night: NightTheme,
 };
 
 /**
@@ -32,15 +30,14 @@ export const TIER_THEME_MAP: Record<number, string> = {
  * Get theme by tier number (used by App.tsx)
  */
 export function getTheme(tier: 1 | 2 | 3): ThemePackage {
-  const themeId = TIER_THEME_MAP[tier] || 'premier';
-  return THEMES[themeId] || THEMES.premier;
+  return THEMES.premier;
 }
 
 /**
  * Get theme by ID directly
  */
 export function getThemeById(id: string): ThemePackage {
-  return THEMES[id] || THEMES.premier;
+  return THEMES.premier;
 }
 
 /**

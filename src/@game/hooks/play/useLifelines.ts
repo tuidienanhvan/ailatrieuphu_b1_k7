@@ -2,7 +2,7 @@
 import { useState, useCallback } from 'react';
 import { useGameStore } from '../../store/useGameStore';
 import { playSound } from '../../utils/audio-manager';
-import { shuffleArray } from '@platform/utils/shuffle';
+import { shuffleArray } from '@game/utils/shuffle';
 import { usePhoneJoke } from '../../events/pranks/phone-joke/usePhoneJoke';
 
 export const useLifelines = (

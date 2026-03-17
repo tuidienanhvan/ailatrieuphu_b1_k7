@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import LatexDisplay from '@platform/components/LatexDisplay';
+import LatexDisplay from '@game/components/LatexDisplay';
 import { useQuestionBoard } from '@game/hooks/play/useQuestionBoard';
 import { Zap } from 'lucide-react';
 

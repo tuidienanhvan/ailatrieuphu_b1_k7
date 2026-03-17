@@ -1,7 +1,7 @@
-﻿import { HubConfigPayload } from '@platform/bridge/types';
-import { mergeConfig } from '@platform/config/manager';
-import { MergedConfig } from '@platform/config/types';
-import { GameEvent } from '@platform/types/event';
+﻿import { HubConfigPayload } from '@game/bridge/types';
+import { mergeConfig } from '@game/config/manager';
+import { MergedConfig } from '@game/config/types';
+import { GameEvent } from '@game/types';
 
 import { GAME_CONFIG, applyGameConfigOverrides } from '@game/defaults/game.defaults';
 import { QUESTIONS, BACKUP_QUESTIONS, applyQuestionPoolOverrides } from '@game/defaults/questions.defaults';
@@ -74,7 +74,10 @@ export function mergeHubPayloadWithDefaults(payload: HubConfigPayload): MergedCo
   return mergeConfig(defaults, {
     gameConfig: payload.gameConfig,
     shopConfig: payload.shopConfig,
-    themeConfig: payload.themeConfig,
+    themeConfig: payload.themeConfig ? {
+      themeOverride: payload.themeConfig.theme,
+      tokens: payload.themeConfig.tokens || {}
+    } : undefined,
     eventConfig: payload.eventConfig,
     user: mapUser(payload.user),
     questionPool: payload.questionPool,

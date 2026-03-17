@@ -1,14 +1,14 @@
 ﻿import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { ConfigProvider } from '@platform/config/context';
-import { MergedConfig } from '@platform/config/types';
-import { onHubMessage } from '@platform/bridge/receiver';
-import { sendReady } from '@platform/bridge/sender';
-import { ErrorBoundary } from '@platform/components/ErrorBoundary';
-import { LoadingScreen } from '@platform/components/LoadingScreen';
-import { useFullscreen } from '@platform/hooks/useFullscreen';
-import { useScaler } from '@platform/hooks/useScaler';
-import { ThemeProvider } from '@platform/theme/Provider';
+import { ConfigProvider } from '@game/config/context';
+import { MergedConfig } from '@game/config/types';
+import { onHubMessage } from '@game/bridge/receiver';
+import { sendReady } from '@game/bridge/sender';
+import { ErrorBoundary } from '@game/components/ErrorBoundary';
+import { LoadingScreen } from '@game/components/LoadingScreen';
+import { useFullscreen } from '@game/hooks/useFullscreen';
+import { useScaler } from '@game/hooks/useScaler';
+import { ThemeProvider } from '@game/theme/core/Provider';
 
 import { GameState } from '@game/types';
 import { useGameStore } from '@game/store/useGameStore';

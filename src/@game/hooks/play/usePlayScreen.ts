@@ -9,7 +9,7 @@ import { useLifelines } from './useLifelines';
 import { useGameModals } from './useGameModals';
 import { GAME_CONFIG, getTierByLevel, getPrizeAmount } from '@game/defaults/game.defaults';
 import { saveMinigameResult } from '../../data/game-api';
-import { calculateFallingPrizeIndex } from '@platform/engine/prize';
+import { calculateFallingPrizeIndex } from '@game/engine/prize';
 import { GameState } from '@game/types';
 import { useGameEvents } from './useGameEvents';
 
