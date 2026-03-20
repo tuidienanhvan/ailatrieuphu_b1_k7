@@ -2,7 +2,7 @@
 import { StateCreator } from 'zustand';
 import { UserInfo, MatchRecord } from '@game/types';
 import { GameStoreState } from '../useGameStore';
-import { SHOP_ITEMS } from '../../defaults/shop.defaults';
+import { SHOP_ITEMS } from '../../shop/constants';
 import { savePurchaseLog } from '../../data/game-api';
 
 export interface PlayerSlice {

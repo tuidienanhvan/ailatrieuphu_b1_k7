@@ -5,7 +5,7 @@ import { GameEvent } from '@game/types';
 
 import { GAME_CONFIG, applyGameConfigOverrides } from '@game/defaults/game.defaults';
 import { QUESTIONS, BACKUP_QUESTIONS, applyQuestionPoolOverrides } from '@game/defaults/questions.defaults';
-import { SHOP_ITEMS, applyShopConfigOverrides } from '@game/defaults/shop.defaults';
+import { SHOP_ITEMS, applyShopConfigOverrides } from '@game/shop/constants';
 import { setThemeTokenOverrides } from '@game/theme/token-runtime';
 import { THEMES } from '@game/theme/registry';
 import { GAME_EVENTS, setRuntimeEvents } from '@game/events';

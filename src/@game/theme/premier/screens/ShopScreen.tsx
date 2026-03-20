@@ -6,8 +6,8 @@ import { PurchaseModal } from '../components/shop/PurchaseModal';
 import { ShopHeader } from '../components/shop/ShopHeader';
 
 // Hooks
-import { useShopScreen } from '@game/hooks/shop/useShopScreen';
-import { usePurchaseModal } from '@game/hooks/shop/usePurchaseModal';
+import { useShopScreen } from '@game/shop/hooks/useShopScreen';
+import { usePurchaseModal } from '@game/shop/hooks/usePurchaseModal';
 
 export const ShopScreen: React.FC = () => {
     // 1. Logic danh sách, tab & điều hướng

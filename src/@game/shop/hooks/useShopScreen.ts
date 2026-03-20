@@ -2,7 +2,7 @@
 import { useState, useMemo, useCallback } from 'react';
 import { useGameStore } from '../../store/useGameStore';
 import { GameState, ShopItem } from '@game/types';
-import { SHOP_ITEMS } from '../../defaults/shop.defaults';
+import { SHOP_ITEMS } from '../constants';
 import { playSound } from '../../utils/audio-manager';
 
 export const useShopScreen = () => {

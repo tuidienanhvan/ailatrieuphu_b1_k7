@@ -2,7 +2,7 @@
 import React, { useMemo } from 'react';
 import { ShopItem } from '@game/types';
 import { Check, Lock, ShoppingCart, Layout, Crown, Zap, Moon, DivideCircle, Bot, Phone, Users, RefreshCw, Plus } from 'lucide-react';
-import { useShopItem } from '@game/hooks/shop/useShopItem';
+import { useShopItem } from '@game/shop/hooks/useShopItem';
 
 interface ShopItemCardProps {
     item: ShopItem;
